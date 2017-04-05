@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/privacy_layout"
+        layout="@layout/neura_sdk_privacy_layout"
+        android:visibility="gone"/>
+
+    <ListView
+        android:id="@+id/picker_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/privacy_layout"
+        android:divider="@android:color/transparent"/>
+
+    <ProgressBar
+        android:id="@+id/pickers_progress"
+        style="@style/neura_sdk_progress_bar"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

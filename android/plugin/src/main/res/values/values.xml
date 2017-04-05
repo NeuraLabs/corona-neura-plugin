@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="neura_sdk_black_translusent">#88000000</color>
+    <color name="neura_sdk_blue_btn">#00ccff</color>
+    <color name="neura_sdk_blue_btn_click">#AA00ccff</color>
+    <color name="neura_sdk_blue_btn_minor_translusent">#ee03afef</color>
+    <color name="neura_sdk_blue_btn_translusent">#a003afef</color>
+    <color name="neura_sdk_blue_btn_transparent">#3303afef</color>
+    <color name="neura_sdk_dark_Grey">#bbbbbb</color>
+    <color name="neura_sdk_dark_gray_feedback_text_color">#3E3E3E</color>
+    <color name="neura_sdk_darker_gray">#999999</color>
+    <color name="neura_sdk_default_edit_hint">#807d7d7d</color>
+    <color name="neura_sdk_default_edit_selected">#b5b5b5</color>
+    <color name="neura_sdk_gray29">#4A4A4A</color>
+    <color name="neura_sdk_grey">#888888</color>
+    <color name="neura_sdk_light_gray_divider">#e6e6e6</color>
+    <color name="neura_sdk_light_gray_fill_selected">#f5f5f5</color>
+    <color name="neura_sdk_light_grey">#e6e6e6</color>
+    <color name="neura_sdk_linked_text_color">#00ccff</color>
+    <color name="neura_sdk_mid_grey">#bebebe</color>
+    <color name="neura_sdk_permission_description_grey">#5c5c5c</color>
+    <color name="neura_sdk_permission_grey">#404040</color>
+    <color name="neura_sdk_pickers_list_divider">#1f000000</color>
+    <color name="neura_sdk_pickers_text_color">#DE000000</color>
+    <color name="neura_sdk_pickers_text_extra_color">#B3000000</color>
+    <color name="neura_sdk_privacy_background">#ebebeb</color>
+    <color name="neura_sdk_privacy_text">#484848</color>
+    <color name="neura_sdk_semi_transparent">#33ffffff</color>
+    <color name="neura_sdk_snackbar_action_bg_color">#1affffff</color>
+    <color name="neura_sdk_snackbar_background">#ff323232</color>
+    <color name="neura_sdk_soft_gray">#dddddd</color>
+    <color name="neura_sdk_soft_gray_translusent">#ccbebebe</color>
+    <color name="neura_sdk_text_input_hint">#4D000000</color>
+    <color name="neura_sdk_time_line_lighter_text_color">#999999</color>
+    <color name="neura_sdk_transparent_blue">#aa03afef</color>
+    <color name="neura_sdk_white_translucent">#e2ffffff</color>
+    <color name="neura_sdk_white_transparent">#88ffffff</color>
+    <color name="neura_sdk_white_transparent_click">#ddffffff</color>
+    <dimen name="neura_sdk_activity_horizontal_margin">16dp</dimen>
+    <dimen name="neura_sdk_activity_vertical_margin">16dp</dimen>
+    <dimen name="neura_sdk_authentication_edit_text_top_margin">5dp</dimen>
+    <dimen name="neura_sdk_authentication_field_text_padding">10dp</dimen>
+    <dimen name="neura_sdk_authentication_fields_text_size">20sp</dimen>
+    <dimen name="neura_sdk_authentication_image_buttons_padding">15sp</dimen>
+    <dimen name="neura_sdk_authentication_status_indicator_margin">5dp</dimen>
+    <dimen name="neura_sdk_back_btn_left_additional_padding">5dp</dimen>
+    <dimen name="neura_sdk_back_btn_right_padding">20dp</dimen>
+    <dimen name="neura_sdk_bubble_layout_minus_padding">-4dp</dimen>
+    <dimen name="neura_sdk_bubble_layout_padding">4dp</dimen>
+    <dimen name="neura_sdk_buttons_padding">5dp</dimen>
+    <dimen name="neura_sdk_login_button_text_size">12sp</dimen>
+    <dimen name="neura_sdk_login_forgot_it_margin_top">-20dp</dimen>
+    <dimen name="neura_sdk_login_input_layer_margin_top">-12dp</dimen>
+    <dimen name="neura_sdk_login_screen_padding">30dp</dimen>
+    <dimen name="neura_sdk_login_screen_padding_small">15dp</dimen>
+    <dimen name="neura_sdk_login_text_margin">15dp</dimen>
+    <dimen name="neura_sdk_login_text_size">14sp</dimen>
+    <dimen name="neura_sdk_neura_me_header_title_text_size">28sp</dimen>
+    <dimen name="neura_sdk_node_authentication_stage_indicator_height">5dp</dimen>
+    <dimen name="neura_sdk_node_authentication_stage_indicator_width">60dp</dimen>
+    <dimen name="neura_sdk_padding_login">10dp</dimen>
+    <dimen name="neura_sdk_padding_login_small">5dp</dimen>
+    <dimen name="neura_sdk_picker_default_padding">16dp</dimen>
+    <dimen name="neura_sdk_picker_list_item_big">40dp</dimen>
+    <dimen name="neura_sdk_picker_margin">32dp</dimen>
+    <dimen name="neura_sdk_secondary_title_text_size">16sp</dimen>
+    <dimen name="neura_sdk_title_text_size">31sp</dimen>
+    <dimen name="neura_sdk_web_view_progress_bar_text_size">24sp</dimen>
+    <string name="generic_invite_intent_chooser_dialog_title">"Invite to Neura via"</string>
+    <string name="latitude_longitude">%1$.8f, %2$.8f</string>
+    <string name="neura_dashboard_app_name">Dashboard</string>
+    <string name="neura_sdk_account_control_title">Your Neura</string>
+    <string name="neura_sdk_account_control_upgrade">Upgrade Neura</string>
+    <string name="neura_sdk_account_control_upgrade_title">%1$s is able to:</string>
+    <string name="neura_sdk_account_control_upgrade_want_to_edit_permissions">Want to edit your permissions?</string>
+    <string name="neura_sdk_account_control_upgrade_your_neura">Upgrade your neura here</string>
+    <string name="neura_sdk_account_details_key">KEY_ACCOUNT_DETAILS</string>
+    <string name="neura_sdk_accuracy_bar_gps_is_off_msg">Phone GPS is off. Turn on GPS to get better accuracy.</string>
+    <string name="neura_sdk_accuracy_bar_location_access_is_off_msg">Please turn on your location settings. They\'re like oxygen for Neura.</string>
+    <string name="neura_sdk_accuracy_bar_location_request_high_accuracy">Set your phone\'s location mode to \"High Accuracy\", to get a truly personalized experience.</string>
+    <string name="neura_sdk_accuracy_bar_mobile_data_access_is_off_msg">Mobile data access is off. To get better accuracy, go to device settings and turn on mobile data access.</string>
+    <string name="neura_sdk_accuracy_bar_no_cellular_network_msg">No cellular network. Verify your network availability</string>
+    <string name="neura_sdk_accuracy_bar_wifi_is_off_msg">Phone Wi-Fi is off. To get better accuracy, turn on Wi-Fi.</string>
+    <string name="neura_sdk_activation_code">Enter your activation code</string>
+    <string name="neura_sdk_activation_sent">Activation code sent to</string>
+    <string name="neura_sdk_add_device">Add Device</string>
+    <string name="neura_sdk_authentication_failed">Log in failed, please try again</string>
+    <string name="neura_sdk_authentication_success_text2">To configure all of your interactions with %1$s and other services,\u0020</string>
+    <string name="neura_sdk_authorize">AUTHORIZE</string>
+    <string name="neura_sdk_change_phone_number">Change phone number</string>
+    <string name="neura_sdk_code_from_sms_hint">4 digit code from sms</string>
+    <string name="neura_sdk_connecting_to">Connecting to</string>
+    <string name="neura_sdk_connecting_to_fit_bit">CONNECTING TO FITBIT</string>
+    <string name="neura_sdk_connection_error_code">Connection failure error code: %1$d</string>
+    <string name="neura_sdk_connection_error_disabled">Google Play services is disabled</string>
+    <string name="neura_sdk_connection_error_internal">An internal error occurred</string>
+    <string name="neura_sdk_connection_error_invalid">The version of Google Play services on this device is not authentic</string>
+    <string name="neura_sdk_connection_error_invalid_account">The specified account name is invalid</string>
+    <string name="neura_sdk_connection_error_license_check_failed">The app is not licensed to the user</string>
+    <string name="neura_sdk_connection_error_message">Connection failure error message: %1$s</string>
+    <string name="neura_sdk_connection_error_misconfigured">The application is misconfigured</string>
+    <string name="neura_sdk_connection_error_missing">Google Play services is missing</string>
+    <string name="neura_sdk_connection_error_needs_resolution">Additional resolution is required</string>
+    <string name="neura_sdk_connection_error_network">A network error occurred</string>
+    <string name="neura_sdk_connection_error_outdated">Google Play services is out of date</string>
+    <string name="neura_sdk_connection_error_sign_in_required">The user is not signed in</string>
+    <string name="neura_sdk_connection_error_unknown">An unknown error occurred</string>
+    <string name="neura_sdk_continue">Continue</string>
+    <string name="neura_sdk_continue_as">Continue as</string>
+    <string name="neura_sdk_country_picker_dialog_fragment_title">Choose a country</string>
+    <string name="neura_sdk_create_account">Activate</string>
+    <string name="neura_sdk_create_my_neura">Activate your account</string>
+    <string name="neura_sdk_device_operations">Device Operations</string>
+    <string name="neura_sdk_dialog_cancel">Cancel</string>
+    <string name="neura_sdk_download_neura_app">download the Neura app</string>
+    <string name="neura_sdk_error_invalidate_phone_verification_code">Invalid code</string>
+    <string name="neura_sdk_error_msg_country_code_cannot_be_empty">Please enter a valid country code</string>
+    <string name="neura_sdk_error_msg_invalidate_phone_number">Phone number can\'t be empty</string>
+    <string name="neura_sdk_error_msg_phone_number_cannot_be_empty">Please enter a valid mobile phone number</string>
+    <string name="neura_sdk_error_msg_phone_number_verification_required_network_connection">No network!\nPlease check your internet connection and try again</string>
+    <string name="neura_sdk_error_occurred_while_trying_to_remove_node">An error occurred while trying to remove %1$s. Please try again</string>
+    <string name="neura_sdk_error_when_creating_node">An error occurred while trying to create a node. Please try again</string>
+    <string name="neura_sdk_forget_me_text">Choosing Forget me will disconnect your Neura account, revoke all permissions and stop any notifications between Neura and this app.\nAre you sure you wish to continue?</string>
+    <string name="neura_sdk_forget_me_title">Forget Me</string>
+    <string name="neura_sdk_get_activation_code">Get Activation Code</string>
+    <string name="neura_sdk_hint_search_country">Search...</string>
+    <string name="neura_sdk_invitation_msg">Hey! I\'d like to automatically notify you every time I %1$s. To get this notification, download the Neura app here: %2$s</string>
+    <string name="neura_sdk_invitation_msg_subject">%1$s has included you in one of his/her Shortcuts on Neura</string>
+    <string name="neura_sdk_invitation_notification_msg">Hey! I\'d like you to automatically notify me every time you %1$s. To get this notification, download the Neura app here: %2$s</string>
+    <string name="neura_sdk_key_activity_recognition_enabled">key_activity_recognition_enabled</string>
+    <string name="neura_sdk_key_events_enabled">KEY_EVENTS_ENABLED</string>
+    <string name="neura_sdk_key_im_a_pioneer">key_im_a_pioneer</string>
+    <string name="neura_sdk_key_im_a_runner">key_im_a_runner</string>
+    <string name="neura_sdk_key_location_updates_enabled">key_location_updates_enabled</string>
+    <string name="neura_sdk_key_pioneer_notification_tone">key_pioneer_notification_tone</string>
+    <string name="neura_sdk_label_picker_more_dialog_fragment_device_title">This device is:</string>
+    <string name="neura_sdk_label_picker_more_dialog_fragment_person_title">This person is:</string>
+    <string name="neura_sdk_label_picker_more_dialog_fragment_place_title">This place is:</string>
+    <string name="neura_sdk_later">Later</string>
+    <string name="neura_sdk_link_my_phone">Link my phone</string>
+    <string name="neura_sdk_link_phone">Link your phone to %1$s</string>
+    <string name="neura_sdk_login_fragment_create_account_switch_btn_text">Get an Account</string>
+    <string name="neura_sdk_login_fragment_login_switch_btn_text">Login</string>
+    <string name="neura_sdk_login_fragment_login_with_phone_text">Login With Phone</string>
+    <string name="neura_sdk_login_to">LOGIN TO</string>
+    <string name="neura_sdk_login_to_fit_bit">LOGIN TO FITBIT</string>
+    <string name="neura_sdk_me_node_name">Me</string>
+    <string name="neura_sdk_message_error_load_authentication_url">An error has occurred. Please refresh and try again</string>
+    <string name="neura_sdk_message_error_resume_authentication">An error occurred while trying to resume item authentication. Please refresh and try again</string>
+    <string name="neura_sdk_message_turn_on_ble_suggestion">Adding a new device works better with Bluetooth enabled.  Shall we turn it on for you?</string>
+    <string name="neura_sdk_name_cannot_be_blank">Name can\'t be blank</string>
+    <string name="neura_sdk_no">No</string>
+    <string name="neura_sdk_no_network">No network available</string>
+    <string name="neura_sdk_node_type_android">android</string>
+    <string name="neura_sdk_node_type_selection_fragment_tag">NODE_TYPE_SELECTION_FRAGMENT_TAG</string>
+    <string name="neura_sdk_node_was_removed_successfully">%1$s was removed!</string>
+    <string name="neura_sdk_permission_activitySummaryPerPlace">Based on your activity level at certain places</string>
+    <string name="neura_sdk_permission_dailyActivitySummary">Based on your daily activity summary</string>
+    <string name="neura_sdk_permission_getDeviceNodesSemantics">By receiving semantic labels (car bluetooth, activity tracker, home alarm etc) associated with devices in your Neura account.</string>
+    <string name="neura_sdk_permission_getLocationNodesSemantics">By receiving semantic labels (home, cafe, hospital etc) associated with places in your Neura account.</string>
+    <string name="neura_sdk_permission_getPersonNodesSemantics">By receiving semantic labels (mom, significant-other, colleague, etc) associated with people in your Neura account.</string>
+    <string name="neura_sdk_permission_sleepData">Based on your sleeping patterns</string>
+    <string name="neura_sdk_permission_userArrivedAtActiveZone">Whenever you arrive at an active zone</string>
+    <string name="neura_sdk_permission_userArrivedAtAirport">Whenever you arrive at the airport</string>
+    <string name="neura_sdk_permission_userArrivedAtCafe">Whenever you arrive at the cafe</string>
+    <string name="neura_sdk_permission_userArrivedAtClinic">Whenever you arrive at the clinic</string>
+    <string name="neura_sdk_permission_userArrivedAtGroceryStore">Whenever you arrive at the grocery store</string>
+    <string name="neura_sdk_permission_userArrivedAtHospital">Whenever you arrive at the hospital</string>
+    <string name="neura_sdk_permission_userArrivedAtPharmacy">Whenever you arrive at the pharmacy</string>
+    <string name="neura_sdk_permission_userArrivedAtRestaurant">Whenever you arrive at the restaurant</string>
+    <string name="neura_sdk_permission_userArrivedAtSchoolCampus">Whenever you arrive at the school campus</string>
+    <string name="neura_sdk_permission_userArrivedHome">Whenever you arrive home</string>
+    <string name="neura_sdk_permission_userArrivedHomeByRunning">Whenever you arrive home by running</string>
+    <string name="neura_sdk_permission_userArrivedHomeByWalking">Whenever you arrive home by walking</string>
+    <string name="neura_sdk_permission_userArrivedHomeFromWork">Whenever you finish commuting home</string>
+    <string name="neura_sdk_permission_userArrivedToGym">Whenever you arrive at the gym</string>
+    <string name="neura_sdk_permission_userArrivedToNode">Whenever you arrive at a certain place</string>
+    <string name="neura_sdk_permission_userArrivedToSignificantLocationAfterWorkout_Running">Whenever you arrive at a specific place after a run</string>
+    <string name="neura_sdk_permission_userArrivedToSignificantLocationFromActiveZone">Whenever you arrive at a pre-defined location from an active zone</string>
+    <string name="neura_sdk_permission_userArrivedToSignificantLocationFromSignificantLocation">Whenever you arrive from one pre-defined location to another</string>
+    <string name="neura_sdk_permission_userArrivedToWork">Whenever you arrive at work</string>
+    <string name="neura_sdk_permission_userArrivedToWorkByRunning">Whenever you arrive at work by running</string>
+    <string name="neura_sdk_permission_userArrivedToWorkByWalking">Whenever you arrive at work by walking</string>
+    <string name="neura_sdk_permission_userArrivedWorkFromHome">Whenever you finish commuting to work</string>
+    <string name="neura_sdk_permission_userDetails">By receiving your name and email address</string>
+    <string name="neura_sdk_permission_userFinishedCycling">Whenever you finish cycling</string>
+    <string name="neura_sdk_permission_userFinishedDriving">Whenever you finish driving</string>
+    <string name="neura_sdk_permission_userFinishedRunning">Whenever you finish running</string>
+    <string name="neura_sdk_permission_userFinishedWalking">Whenever you finish walking</string>
+    <string name="neura_sdk_permission_userFinishedWorkOut">Whenever you finish working out</string>
+    <string name="neura_sdk_permission_userFinishedWorkingOut">Whenever you finish working out</string>
+    <string name="neura_sdk_permission_userGotUp">Whenever you get up</string>
+    <string name="neura_sdk_permission_userHasBeenActiveMoreThan30Minutes">Whenever you are active for more than 30 minutes</string>
+    <string name="neura_sdk_permission_userHasBeenRunningMoreThan10Minutes">Whenever you run for more than 10 minutes</string>
+    <string name="neura_sdk_permission_userHasBeenSleepingMoreThan30Minutes">Whenever you are asleep for more than 30 minutes</string>
+    <string name="neura_sdk_permission_userHasBeenWalkingMoreThan10Minutes">Whenever you walk for more than 10 minutes</string>
+    <string name="neura_sdk_permission_userIsAtHome">You are at home</string>
+    <string name="neura_sdk_permission_userIsAtWork">Whenever you are at work</string>
+    <string name="neura_sdk_permission_userIsCycling">Whenever you cycle</string>
+    <string name="neura_sdk_permission_userIsDriving">Whenever you drive</string>
+    <string name="neura_sdk_permission_userIsIdle">Whenever you\'re idle</string>
+    <string name="neura_sdk_permission_userIsOnTheWayHome">Whenever you\'re on the way home</string>
+    <string name="neura_sdk_permission_userIsOnTheWayToActiveZone">Whenever you\'re on the way to an active zone</string>
+    <string name="neura_sdk_permission_userIsOnTheWayToWork">Whenever you\'re on the way to work</string>
+    <string name="neura_sdk_permission_userIsRelativelyActiveAtSignificantLocation">Whenever you are relatively active at a specific place</string>
+    <string name="neura_sdk_permission_userIsRunning">Whenever you run</string>
+    <string name="neura_sdk_permission_userIsWorkingOutWithSignificantPerson">Whenever you work out near a significant person</string>
+    <string name="neura_sdk_permission_userLeftActiveZone">Whenever you leave an active zone</string>
+    <string name="neura_sdk_permission_userLeftAirport">Whenever you leave the airport</string>
+    <string name="neura_sdk_permission_userLeftCafe">Whenever you leave the cafe</string>
+    <string name="neura_sdk_permission_userLeftGym">Whenever you leave the gym</string>
+    <string name="neura_sdk_permission_userLeftHome">Whenever you leave home</string>
+    <string name="neura_sdk_permission_userLeftHospital">Whenever you leave the hospital</string>
+    <string name="neura_sdk_permission_userLeftRestaurant">Whenever you leave the restaurant</string>
+    <string name="neura_sdk_permission_userLeftSchoolCampus">Whenever you leave the school campus</string>
+    <string name="neura_sdk_permission_userLeftWork">Whenever you leave work</string>
+    <string name="neura_sdk_permission_userPhoneNumber">By receiving your phone number</string>
+    <string name="neura_sdk_permission_userSituation">Based on insights about your whereabouts and activities</string>
+    <string name="neura_sdk_permission_userStartedCycling">Whenever you start cycling</string>
+    <string name="neura_sdk_permission_userStartedDriving">Whenever you start driving</string>
+    <string name="neura_sdk_permission_userStartedRunning">Whenever you start running</string>
+    <string name="neura_sdk_permission_userStartedRunningFromPlace">Whenever you start running from a certain place</string>
+    <string name="neura_sdk_permission_userStartedSleeping">Whenever you fall asleep</string>
+    <string name="neura_sdk_permission_userStartedWalking">Whenever you start walking</string>
+    <string name="neura_sdk_permission_userStartedWorkOut">Whenever you start working out</string>
+    <string name="neura_sdk_permission_userWokeUp">Whenever you wake up</string>
+    <string name="neura_sdk_permission_wellnessProfile">Based on your wellness patterns</string>
+    <string name="neura_sdk_permissions_approve">Approve</string>
+    <string name="neura_sdk_permissions_be_able_to">would like to be able to:</string>
+    <string name="neura_sdk_permissions_list_driving_activity_habits">Your driving activity and habits</string>
+    <string name="neura_sdk_permissions_list_general_info">Your general info</string>
+    <string name="neura_sdk_permissions_list_physical_activity">Your physical activity</string>
+    <string name="neura_sdk_permissions_list_presence_at_home">Your presence at home</string>
+    <string name="neura_sdk_permissions_list_presence_at_places">Your presence at certain types of places</string>
+    <string name="neura_sdk_permissions_list_presence_at_work">Your presence at work</string>
+    <string name="neura_sdk_permissions_list_sleeping_habits">Your sleeping habits</string>
+    <string name="neura_sdk_permissions_more">more</string>
+    <string name="neura_sdk_permissions_personalized_services">would like to provide you with a more personalized services based on information stored in your Neura account:</string>
+    <string name="neura_sdk_permissions_tap_for_all_permissions">Tap to see all requested permissions</string>
+    <string name="neura_sdk_phone">Enter phone number including country code</string>
+    <string name="neura_sdk_phone2">Enter your phone number + country code</string>
+    <string name="neura_sdk_phone_code_code_sent">Code sent.</string>
+    <string name="neura_sdk_phone_code_confirmation_msg_code_can_not_be_empty">Please enter the activation code</string>
+    <string name="neura_sdk_phone_code_confirmation_resend">Resend code</string>
+    <string name="neura_sdk_phone_code_missing">Code is not valid.</string>
+    <string name="neura_sdk_phone_code_sending">Sending...</string>
+    <string name="neura_sdk_phone_message">You will use it to manage features you have just enabled.</string>
+    <string name="neura_sdk_phone_not_valid">Phone number is not valid</string>
+    <string name="neura_sdk_phone_sent1">An sms with an activation code has been sent to your phone number</string>
+    <string name="neura_sdk_phone_sent2">Please enter the code below:</string>
+    <string name="neura_sdk_phone_sent3">Please enter the code above</string>
+    <string name="neura_sdk_phone_verification_fragment_why_we_need_your_phone_number">Why is my phone number required?</string>
+    <string name="neura_sdk_phone_verification_why_we_need_your_phone_number_explenation">First of all, it\'s important to ensure that you are really you. Your phone number is also required to make sure you can enjoy Neura\'s smart notifications. It will never be used for any other purpose anyway.</string>
+    <string name="neura_sdk_picker_person_title">Choose a person</string>
+    <string name="neura_sdk_picker_places_title">Choose a place</string>
+    <string name="neura_sdk_picker_service_title">Add a device</string>
+    <string name="neura_sdk_pioneer_turn_on_msg1">Thank you for joining our beta group and helping us improve our services</string>
+    <string name="neura_sdk_pioneer_turn_on_msg2">On the following 21 days, we will ask a flow of questions. Some may seem silly to you but they help us improve our services. Thanks!</string>
+    <string name="neura_sdk_pioneer_turn_on_msg3">Pioneers require a special permission in order to show overlay window, please enable this permission.</string>
+    <string name="neura_sdk_place_feedback_delete_message_approval_dialog">Delete this event from lifeline?</string>
+    <string name="neura_sdk_places_auto_complete_edit_text_hint">Type a location</string>
+    <string name="neura_sdk_privacy_text_device">%1$s asks you to add a device</string>
+    <string name="neura_sdk_privacy_text_device_capabilities1">%1$s asks you to add a device which supports ​</string>
+    <string name="neura_sdk_privacy_text_device_capabilities2">. It will not have direct access to its data.​</string>
+    <string name="neura_sdk_privacy_text_place">Add your\u0020</string>
+    <string name="neura_sdk_privacy_text_service">No party will receive any data below without your explicit approval.</string>
+    <string name="neura_sdk_reason_sleepData">Notify you if your child had a too short night sleep</string>
+    <string name="neura_sdk_reason_userArrivedAtSchoolCampus">Notify you that your child arrived school safely</string>
+    <string name="neura_sdk_reason_userArrivedHome">Notify you that your child arrived home safely</string>
+    <string name="neura_sdk_reason_userGotUp">Notify you if your child didn\'t get enough sleep last night</string>
+    <string name="neura_sdk_reason_userLeftHome">Notify you when your child leaves home</string>
+    <string name="neura_sdk_reason_userLeftSchoolCampus">Notify you that your child has left school</string>
+    <string name="neura_sdk_reason_userPhoneNumber">Send notify you regarding events related to your child</string>
+    <string name="neura_sdk_reason_userStartedSleeping">Notify you if your child didn\'t get enough sleep last night</string>
+    <string name="neura_sdk_reset_password_failed">We couldn\'t find this e-mail address</string>
+    <string name="neura_sdk_reset_password_sent">Mail was sent, check your inbox</string>
+    <string name="neura_sdk_s_app_name">NeuraStandAloneSDK</string>
+    <string name="neura_sdk_send_events_to_server">send_events_to_server</string>
+    <string name="neura_sdk_send_me_my_password">Send me my password</string>
+    <string name="neura_sdk_send_neura_your_log_and_data">Send Log To Neura</string>
+    <string name="neura_sdk_set_it_now">Set it now</string>
+    <string name="neura_sdk_sign_up">SIGN UP</string>
+    <string name="neura_sdk_simulate_an_event">Simulate an Event</string>
+    <string name="neura_sdk_sms">Carrier SMS charges may apply</string>
+    <string name="neura_sdk_snackbar_dismiss">dismiss</string>
+    <string name="neura_sdk_snackbar_go_to_settings">go to settings</string>
+    <string name="neura_sdk_snacknar_yes_it_is">yes, it is</string>
+    <string name="neura_sdk_something_went_wrong_please_try_again_latter">Something went wrong. please try again later</string>
+    <string name="neura_sdk_subscriptions_identifier_exists">specified identifier already exists</string>
+    <string name="neura_sdk_terms_and_conditions">Terms and conditions</string>
+    <string name="neura_sdk_title_activity_main">DASHBOARD</string>
+    <string name="neura_sdk_title_neura_dot_me">NEURA</string>
+    <string name="neura_sdk_username">Enter name</string>
+    <string name="neura_sdk_vendor_person">person</string>
+    <string name="neura_sdk_vendor_phone">phone</string>
+    <string name="neura_sdk_verify">Verify</string>
+    <string name="neura_sdk_verify_phone">Verify your phone</string>
+    <string name="neura_sdk_verify_title">Enter verification code</string>
+    <string name="neura_sdk_yes">Yes</string>
+    <string name="password_change_failure_message">An error occurred while trying to change password. Please refresh and try again</string>
+    <string name="password_change_success_message">New password saved </string>
+    <string name="running_mode_notification_desc_start">Tap play to start running</string>
+    <string name="running_mode_notification_desc_stop">Tap pause to stop running</string>
+    <string name="running_mode_notification_title">Running detector</string>
+    <style name="NeuraAlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
+        <item name="android:background">#fafafa</item>
+        <item name="android:colorPrimary">@color/neura_sdk_blue_btn</item>
+        <item name="android:colorAccent">@color/neura_sdk_blue_btn</item>
+    </style>
+    <style name="NeuraSdkToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+    <style name="Theme.Neura.NoActionBar" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <!-- <item name="windowNoTitle">true</item>--> <!-- isn't necessary on dashboard -->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>--> <!-- isn't necessary on dashboard -->
+        <!--<item name="windowActionBar">false</item>--> <!-- isn't necessary on dashboard -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- mandatory on dashboard -->
+    </style>
+    <style name="Theme.Neura.Transparent" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="neura_sdk_Authentication_Button_Style" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/neura_sdk_login_button_text_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/neura_sdk_authentication_field_text_padding</item>
+    </style>
+    <style name="neura_sdk_auth_button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">1dp</item>
+        <item name="android:layout_marginRight">1dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/neura_sdk_login_text_size</item>
+    </style>
+    <style name="neura_sdk_auth_layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/neura_sdk_light_gray_fill_selected</item>
+        <item name="android:paddingTop">@dimen/neura_sdk_login_screen_padding</item>
+        <item name="android:paddingBottom">@dimen/neura_sdk_login_screen_padding_small</item>
+        <item name="android:paddingLeft">@dimen/neura_sdk_login_screen_padding</item>
+        <item name="android:paddingRight">@dimen/neura_sdk_login_screen_padding</item>
+    </style>
+    <style name="neura_sdk_auth_link">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/neura_sdk_blue_btn</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textSize">@dimen/neura_sdk_login_text_size</item>
+        <item name="android:padding">@dimen/neura_sdk_padding_login</item>
+    </style>
+    <style name="neura_sdk_auth_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/neura_sdk_login_text_size</item>
+    </style>
+    <style name="neura_sdk_auth_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/neura_sdk_login_text_margin</item>
+        <item name="android:layout_marginTop">@dimen/neura_sdk_login_text_margin</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/neura_sdk_title_text_size</item>
+    </style>
+    <style name="neura_sdk_back_button_style" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">
+            @drawable/neura_sdk_authentication_signing_bottom_button_selector
+        </item>
+        <item name="android:paddingRight">@dimen/neura_sdk_back_btn_right_padding</item>
+        <item name="android:paddingTop">@dimen/neura_sdk_authentication_image_buttons_padding</item>
+        <item name="android:paddingBottom">@dimen/neura_sdk_authentication_image_buttons_padding
+        </item>
+        <item name="android:paddingLeft">@dimen/neura_sdk_back_btn_left_additional_padding</item>
+    </style>
+    <style name="neura_sdk_custom_light_material_theme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorControlActivated">@color/neura_sdk_blue_btn</item>
+        <item name="colorControlNormal">@color/neura_sdk_default_edit_selected</item>
+        <item name="android:textColorHint">@color/neura_sdk_default_edit_hint</item>
+    </style>
+    <style name="neura_sdk_logo_view_style" parent="@android:style/Widget.ImageButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/neura_sdk_logo</item>
+    </style>
+    <style name="neura_sdk_main_header_style" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/neura_sdk_neura_me_header_title_text_size</item>
+        <item name="android:text">@string/neura_sdk_title_neura_dot_me</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="neura_sdk_node_authentication_fragment_connecting_progress_bar_style" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:max">100</item>
+        <item name="android:progressDrawable">@drawable/neura_sdk_node_authentication_progress
+        </item>
+    </style>
+    <style name="neura_sdk_node_authentication_stage_indicator_Style" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">@dimen/neura_sdk_node_authentication_stage_indicator_width
+        </item>
+        <item name="android:layout_height">
+            @dimen/neura_sdk_node_authentication_stage_indicator_height
+        </item>
+        <item name="android:background">@color/neura_sdk_white_transparent</item>
+    </style>
+    <style name="neura_sdk_node_authentication_status_text_Style" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/neura_sdk_secondary_title_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="neura_sdk_node_authentication_web_view_progress_bar_message_line" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/neura_sdk_web_view_progress_bar_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="neura_sdk_progress_bar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateDrawable">@drawable/neura_sdk_progress_bar</item>
+        <item name="android:indeterminateDuration">1000</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+    <style name="neura_sdk_snack_bar_action">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/neura_sdk_sb__btn_bg</item>
+    </style>
+    <style name="neura_sdk_text_input_style">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/neura_sdk_text_input_hint</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorAccent">@color/neura_sdk_text_input_hint</item>
+        <item name="colorControlNormal">@color/neura_sdk_text_input_hint</item>
+        <item name="colorControlActivated">@color/neura_sdk_blue_btn</item>
+    </style>
+    <style name="neura_sdk_transparent_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">@dimen/neura_sdk_picker_default_padding</item>
+        <item name="android:paddingRight">@dimen/neura_sdk_picker_default_padding</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/neura_sdk_button_semi_transparent</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+</resources>

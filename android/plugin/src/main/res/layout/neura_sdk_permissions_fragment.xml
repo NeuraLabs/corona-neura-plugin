@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/neura_sdk_auth_layout"
+    android:paddingBottom="30dp">
+
+    <RelativeLayout
+        android:id="@+id/neura_message_spitter_spit_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/neura_sdk_application_icon_layout" />
+
+        <RelativeLayout
+            android:id="@+id/neura_message_combind_mode_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_icon_layout"
+            android:visibility="visible">
+
+            <com.neura.dashboard.view.widget.RobotoMediumTextView
+                android:id="@+id/fragment_present_message_spitter_message_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:textColor="@color/neura_sdk_time_line_lighter_text_color"
+                android:textSize="14sp" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/approve_layout"
+                android:layout_below="@id/fragment_present_message_spitter_message_title_view">
+
+                <ListView
+                    android:id="@+id/permissions_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fadeScrollbars="false" />
+
+                <com.neura.dashboard.view.widget.RobotoMediumTextView
+                    android:id="@+id/open_more_permissions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/permissions_list"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/permissions_list"
+                    android:layout_marginBottom="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/neura_sdk_blue_btn"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <include layout="@layout/neura_sdk_authenticate_button" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/permissions_progress"
+        style="@style/neura_sdk_progress_bar"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+</FrameLayout>

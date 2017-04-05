@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NeuraDialogTheme" parent="@android:style/Theme.Holo.Dialog">
+        <!-- API 11 theme customizations can go here. -->
+      <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+    <style name="NeuraTheme" parent="@android:style/Theme.Holo">
+        <!-- API 11 theme customizations can go here. -->
+
+    </style>
+</resources>

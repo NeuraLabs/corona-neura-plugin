@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/neura_sdk_auth_layout">
+
+    <ImageView
+        android:id="@+id/neura_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/neura_sdk_logo_color_small" />
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/neura_title"
+        android:layout_marginTop="10dp"
+        android:gravity="left"
+        android:text="@string/neura_sdk_account_control_upgrade_title"
+        android:textColor="@color/neura_sdk_time_line_lighter_text_color"
+        android:textSize="14sp" />
+
+    <ListView
+        android:id="@+id/permissions_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/edit_permissions_title"
+        android:layout_below="@id/title"
+        android:layout_marginBottom="25dp"
+        android:layout_marginTop="25dp"
+        android:fadeScrollbars="false" />
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/edit_permissions_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_upgrade_neura"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:text="@string/neura_sdk_account_control_upgrade_want_to_edit_permissions"
+        android:textAllCaps="true"
+        android:textColor="@color/neura_sdk_permission_description_grey"
+        android:textSize="14sp" />
+
+    <com.neura.dashboard.view.widget.RobotoButton
+        android:id="@+id/button_upgrade_neura"
+        style="@style/neura_sdk_auth_button"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="4dp"
+        android:background="@color/neura_sdk_blue_btn"
+        android:elevation="1dp"
+        android:text="@string/neura_sdk_account_control_upgrade_your_neura"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white" />
+</RelativeLayout>

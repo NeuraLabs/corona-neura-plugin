@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="neura_sdk_activity_horizontal_margin">128dp</dimen>
+</resources>

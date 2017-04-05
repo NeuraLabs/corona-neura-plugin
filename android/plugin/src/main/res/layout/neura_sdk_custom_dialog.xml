@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusableInTouchMode="true"
+    android:padding="20dp">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:theme="@style/neura_sdk_text_input_style"
+        app:errorEnabled="true">
+
+        <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="phone"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
+    </android.support.design.widget.TextInputLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@style/neura_sdk_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/switcher_link"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
+    <TextSwitcher
+        android:id="@+id/switcher_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_input_layout_phone_number"
+        android:layout_marginTop="-15dp" />
+
+</RelativeLayout>

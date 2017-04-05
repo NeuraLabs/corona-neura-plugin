@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_item_data_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+
+    <View
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/neura_sdk_picker_default_padding"
+        android:background="@android:color/transparent" />
+
+    <RelativeLayout
+        android:id="@+id/image_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true">
+
+        <com.neura.dashboard.view.CircleImageView
+            android:id="@+id/image"
+            android:layout_width="@dimen/neura_sdk_picker_list_item_big"
+            android:layout_height="@dimen/neura_sdk_picker_list_item_big"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/neura_sdk_picker_default_padding"
+            android:scaleType="centerInside"
+            android:src="@drawable/neura_sdk_default_person"
+            android:visibility="visible" />
+
+        <com.neura.dashboard.view.CircleImageView
+            android:id="@+id/image_context"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/image"
+            android:layout_marginLeft="-28dp"
+            android:layout_marginTop="-3dp"
+            android:layout_toRightOf="@+id/image"
+            android:scaleType="centerInside"
+            android:src="@drawable/neura_sdk_small_neura_circle"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/text_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/image_container">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/add">
+
+            <com.neura.dashboard.view.widget.RobotoMediumTextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:maxLines="3"
+                android:paddingRight="@dimen/neura_sdk_picker_default_padding"
+                android:textColor="@color/neura_sdk_pickers_text_color"
+                android:textSize="14sp" />
+
+            <com.neura.dashboard.view.widget.RobotoRegularTextView
+                android:id="@+id/text_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:maxLines="1"
+                android:paddingRight="@dimen/neura_sdk_picker_default_padding"
+                android:singleLine="true"
+                android:textColor="@color/neura_sdk_pickers_text_extra_color"
+                android:textSize="13sp" />
+        </RelativeLayout>
+
+        <com.neura.dashboard.view.widget.RobotoButton
+            android:id="@+id/add"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/neura_sdk_picker_default_padding"
+            android:background="@drawable/neura_sdk_button_transparent_border_blue"
+            android:paddingBottom="3dp"
+            android:paddingLeft="@dimen/neura_sdk_picker_default_padding"
+            android:paddingRight="@dimen/neura_sdk_picker_default_padding"
+            android:paddingTop="3dp"
+            android:text="Add"
+            android:textColor="@color/neura_sdk_blue_btn"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignLeft="@+id/text_layout"
+        android:layout_below="@+id/image_container"
+        android:background="@color/neura_sdk_pickers_list_divider" />
+
+</RelativeLayout>

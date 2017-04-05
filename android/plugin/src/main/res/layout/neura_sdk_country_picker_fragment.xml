@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <com.neura.dashboard.view.widget.RobotoRegularTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/neura_sdk_country_picker_dialog_fragment_title"
+        android:textColor="@color/neura_sdk_time_line_lighter_text_color"
+        android:textSize="21sp" />
+
+    <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
+        android:id="@+id/country_picker_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/neura_sdk_hint_search_country"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/neura_sdk_login_text_size" />
+
+    <ListView
+        android:id="@+id/country_picker_listview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>

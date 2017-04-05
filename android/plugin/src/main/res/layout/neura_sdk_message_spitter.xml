@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/neura_message_spitter_spit_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <com.neura.dashboard.view.widget.RobotoRegularTextView
+            android:id="@+id/fragment_present_message_spitter_message_simple_mode_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="@dimen/neura_sdk_activity_horizontal_margin"
+            android:paddingRight="@dimen/neura_sdk_activity_horizontal_margin"
+            android:text="Hello Jennifer!"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/neura_message_combind_mode_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <com.neura.dashboard.view.widget.RobotoMediumTextView
+                android:id="@+id/fragment_present_message_spitter_message_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="20dp"
+                android:gravity="left"
+                android:text="Title!"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <com.neura.dashboard.view.widget.RobotoRegularTextView
+                android:id="@+id/fragment_present_message_spitter_message_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_present_message_spitter_message_title_view"
+                android:layout_marginLeft="20dp"
+                android:gravity="left"
+                android:text="Message bla bla bla"
+                android:textColor="@color/neura_sdk_white_transparent"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/fragment_present_message_spitter_message_text_view"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/neura_sdk_activity_horizontal_margin"
+                android:paddingRight="@dimen/neura_sdk_activity_horizontal_margin">
+
+                <com.neura.dashboard.view.widget.RobotoButton
+                    android:id="@+id/message_spitter_negative_btn"
+                    style="@style/neura_sdk_Authentication_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:height="20dp"
+                    android:background="@drawable/neura_sdk_authentication_translusent_button_background_selector"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/neura_sdk_no"
+                    android:textSize="14sp"/>
+
+                <com.neura.dashboard.view.widget.RobotoButton
+                    android:id="@+id/message_spitter_positive_btn"
+                    style="@style/neura_sdk_Authentication_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="@dimen/neura_sdk_buttons_padding"
+                    android:background="@drawable/neura_sdk_blue_btn_selector"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/neura_sdk_yes"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/neura_activity_neura_blue_popup_spitter"
+        android:layout_width="8dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|left"
+        android:background="@color/neura_sdk_blue_btn" />
+
+</FrameLayout>

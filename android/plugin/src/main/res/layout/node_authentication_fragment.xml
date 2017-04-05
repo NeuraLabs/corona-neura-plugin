@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#cc000000">
+
+    <ImageButton
+        android:id="@+id/authentication_fragment_back_btn"
+        style="@style/neura_sdk_back_button_style"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/neura_sdk_back_to_app"
+        android:visibility="gone"/>
+
+    <com.neura.dashboard.view.widget.RobotoRegularTextView
+        android:id="@+id/authentication_fragment_neura_me_header"
+        style="@style/neura_sdk_main_header_style"
+        android:layout_below="@id/authentication_fragment_back_btn"
+        android:visibility="gone" />
+
+    <com.neura.dashboard.view.widget.RobotoButton
+        android:id="@+id/node_authentication_fragment_logo_view"
+        style="@style/neura_sdk_logo_view_style"
+        android:layout_height="0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/neura_sdk_activity_vertical_margin"
+        android:layout_marginTop="@dimen/neura_sdk_authentication_edit_text_top_margin" />
+
+    <RelativeLayout
+        android:id="@+id/node_authentication_fragment_status_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/node_authentication_fragment_logo_view"
+        android:layout_marginLeft="@dimen/neura_sdk_activity_horizontal_margin"
+        android:layout_marginRight="@dimen/neura_sdk_activity_horizontal_margin"
+        android:layout_marginTop="@dimen/neura_sdk_authentication_edit_text_top_margin"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.neura.dashboard.view.widget.RobotoButton
+            android:id="@+id/node_authentication_status_right_indicator"
+            style="@style/neura_sdk_node_authentication_stage_indicator_Style"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+
+        <com.neura.dashboard.view.widget.RobotoButton
+            android:id="@+id/node_authentication_status_left_indicator"
+            style="@style/neura_sdk_node_authentication_stage_indicator_Style"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/neura_sdk_authentication_status_indicator_margin"
+            android:layout_toLeftOf="@id/node_authentication_status_right_indicator"/>
+
+        <com.neura.dashboard.view.widget.RobotoRegularTextView
+            android:id="@+id/node_authentication_status_text"
+            style="@style/neura_sdk_node_authentication_status_text_Style"
+            android:text="@string/neura_sdk_login_to_fit_bit" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/node_authentication_fragment_web_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/node_authentication_fragment_status_container"
+        android:layout_below="@id/authentication_fragment_neura_me_header"
+        android:layout_marginTop="@dimen/neura_sdk_authentication_edit_text_top_margin">
+
+        <WebView
+            android:id="@+id/node_authentication_fragment_web_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/node_authentication_fragment_connecting_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/neura_sdk_activity_horizontal_margin">
+
+            <com.neura.dashboard.view.widget.RobotoRegularTextView
+                android:id="@+id/node_authentication_fragment_connecting_message"
+                style="@style/neura_sdk_node_authentication_web_view_progress_bar_message_line"
+                android:layout_alignParentTop="true"
+                android:text="@string/neura_sdk_connecting_to_fit_bit" />
+
+            <ProgressBar
+                android:id="@+id/node_authentication_fragment_connecting_seek_bar"
+                style="@style/neura_sdk_node_authentication_fragment_connecting_progress_bar_style"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/neura_sdk_node_authentication_stage_indicator_height"
+                android:layout_alignLeft="@id/node_authentication_fragment_connecting_message"
+                android:layout_alignRight="@id/node_authentication_fragment_connecting_message"
+                android:layout_below="@id/node_authentication_fragment_connecting_message"
+                android:layout_marginTop="10dp"
+                android:progress="50" />
+        </RelativeLayout>
+    </FrameLayout>
+
+</RelativeLayout>

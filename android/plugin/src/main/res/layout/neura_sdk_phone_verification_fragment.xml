@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/neura_sdk_auth_layout"
+    android:clickable="true">
+
+    <include layout="@layout/neura_sdk_application_icon_layout" />
+
+    <!-- in weave - removing layout_below attribute, so this layout will be in the center,
+    since the layout neura_sdk_application_icon_layout isn't visible -->
+    <RelativeLayout
+        android:id="@+id/authentication_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/app_icon_layout"
+        android:layout_centerVertical="true">
+
+        <com.neura.dashboard.view.widget.AlironThinTextView
+            android:id="@+id/title"
+            style="@style/neura_sdk_auth_title"
+            android:text="@string/neura_sdk_verify_phone" />
+
+        <com.neura.dashboard.view.widget.RobotoLightTextView
+            android:id="@+id/verification_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/phone_verification_layout"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="-20dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/verification_text"
+            android:layout_centerHorizontal="true"
+            android:focusableInTouchMode="true"
+            app:errorEnabled="true">
+
+            <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
+                android:id="@+id/phone_verification_code"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="4"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:singleLine="true"
+                android:textColor="@color/neura_sdk_gray29"
+                android:textSize="30sp" />
+        </android.support.design.widget.TextInputLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/authentication_container"
+        android:layout_centerInParent="true">
+
+        <com.neura.dashboard.view.widget.RobotoButton
+            android:id="@+id/phone_verification_fragment_phone_details_approve_btn"
+            style="@style/neura_sdk_auth_button"
+            android:background="@color/neura_sdk_blue_btn"
+            android:elevation="1dp"
+            android:text="@string/neura_sdk_create_account"
+            android:textColor="@android:color/white" />
+
+        <ProgressBar
+            android:id="@+id/phone_verification_fragment_loading_true"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="true"
+            android:indeterminateTint="@android:color/white"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/change_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/switcher_link"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/neura_sdk_change_phone_number"
+        android:textColor="@color/neura_sdk_blue_btn"
+        android:textSize="14sp" />
+
+    <TextSwitcher
+        android:id="@+id/switcher_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/neura_sdk_auth_layout"
+    android:paddingBottom="@dimen/neura_sdk_padding_login"
+    android:paddingTop="@dimen/neura_sdk_padding_login">
+
+    <ProgressBar
+        android:id="@+id/permissions_progress"
+        style="@style/neura_sdk_progress_bar"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <ImageView
+            android:id="@+id/neura_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/neura_sdk_logo_color_small" />
+
+        <include layout="@layout/neura_sdk_application_icon_layout" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/neura_message_combind_mode_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/authentication_container"
+        android:layout_below="@+id/header_layout"
+        android:visibility="visible">
+
+        <com.neura.dashboard.view.widget.RobotoLightTextView
+            android:id="@+id/fragment_present_message_spitter_message_title_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/neura_sdk_privacy_text"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/approve_layout"
+            android:layout_below="@id/fragment_present_message_spitter_message_title_view"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
+
+            <ListView
+                android:id="@+id/permissions_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:fadeScrollbars="false" />
+
+            <com.neura.dashboard.view.widget.RobotoMediumTextView
+                android:id="@+id/open_more_permissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/permissions_list"
+                android:layout_below="@+id/permissions_list"
+                android:paddingLeft="35dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/neura_sdk_blue_btn"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- in weave - removing layout_below attribute, so this layout will be in the center,
+    since the layout neura_sdk_application_icon_layout isn't visible -->
+    <RelativeLayout
+        android:id="@+id/authentication_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/change_phone_number"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="5dp"
+        android:animateLayoutChanges="true">
+
+        <RelativeLayout
+            android:id="@+id/layout_phone_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/description"
+            android:layout_marginBottom="-15dp">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/authentication_fragment_email_edit_text_lyt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/neura_sdk_phone"
+                android:theme="@style/neura_sdk_text_input_style"
+                app:errorEnabled="true">
+
+                <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
+                    android:id="@+id/authentication_fragment_email_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="phone"
+                    android:maxLines="1"
+                    android:textColor="@android:color/black" />
+            </android.support.design.widget.TextInputLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_phone_confirmation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/description"
+            android:layout_marginBottom="-15dp">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/phone_confirmation_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/neura_sdk_activation_code"
+                android:theme="@style/neura_sdk_text_input_style"
+                app:errorEnabled="true">
+
+                <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
+                    android:id="@+id/phone_verification_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="phone"
+                    android:maxLength="4"
+                    android:maxLines="1"
+                    android:textColor="@android:color/black" />
+            </android.support.design.widget.TextInputLayout>
+        </RelativeLayout>
+
+        <com.neura.dashboard.view.widget.RobotoRegularTextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_phone_input"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:text="@string/neura_sdk_sms"
+            android:textColor="@color/neura_sdk_mid_grey"
+            android:textSize="@dimen/neura_sdk_login_text_size" />
+
+        <include
+            layout="@layout/neura_sdk_authenticate_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/description" />
+
+        <ProgressBar
+            android:id="@+id/authentication_fragment_loading"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/approve_layout"
+            android:layout_alignTop="@+id/approve_layout"
+            android:layout_centerHorizontal="true"
+            android:elevation="2dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@android:color/white"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/change_phone_number"
+        style="@style/neura_sdk_auth_link"
+        android:layout_above="@+id/login_terms_of_condition"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/neura_sdk_padding_login_small"
+        android:text="@string/neura_sdk_change_phone_number" />
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/login_terms_of_condition"
+        style="@style/neura_sdk_auth_link"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/neura_sdk_padding_login_small"
+        android:text="@string/neura_sdk_terms_and_conditions" />
+
+
+</RelativeLayout><!-- From: file:/E:/Workspaces/Neura-Android-Gradle_new/dashboard/src/main/res/layout/neura_sdk_authentication_fragment.xml --><!-- From: file:/E:/Workspaces/Neura-Android-Gradle_new/neurastandalonesdk/build/intermediates/exploded-aar/Neura-Android-Gradle_new/dashboard/unspecified/res/layout/neura_sdk_authentication_fragment.xml -->

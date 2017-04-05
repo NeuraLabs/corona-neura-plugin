@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/neura_sdk_blue_translusent_rounded_corners_background_clicked" android:state_selected="true"/>
+    <item android:drawable="@drawable/neura_sdk_blue_translusent_rounded_corners_background_clicked" android:state_pressed="true"/>
+    <item android:drawable="@drawable/neura_sdk_login_btn_white_translusent_shape" android:state_enabled="false"/>
+    <item android:drawable="@drawable/neura_sdk_blue_translusent_rounded_corners_background"/>
+
+</selector>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/neura_sdk_activity_vertical_margin">
+
+    <RelativeLayout
+        android:id="@+id/more_lable_picker_dialog_header_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingTop="@dimen/neura_sdk_activity_vertical_margin" >
+
+        <com.neura.dashboard.view.widget.RobotoMediumTextView
+            android:id="@+id/more_lable_picker_dialog_default_header_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/neura_sdk_activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:text="This place is a"
+            android:textSize="22sp" />
+
+        <com.neura.dashboard.view.widget.RobotoRegularTextView
+            android:id="@+id/more_lable_picker_dialog_adress_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/more_lable_picker_dialog_default_header_text_view"
+            android:layout_marginLeft="@dimen/neura_sdk_activity_horizontal_margin"
+            android:layout_marginTop="5dp"
+            android:text="Grinberg 17 St. Holon"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/more_lable_top_shade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/more_lable_picker_dialog_header_view_container"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/neura_sdk_more_lable_bottom_shade" />
+
+    <ImageButton
+        android:id="@+id/place_feedback_fragment_done_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/neura_sdk_activity_horizontal_margin"
+        android:layout_marginRight="@dimen/neura_sdk_activity_horizontal_margin"
+        android:background="@drawable/neura_sdk_blue_translusent_rounded_corners_selector"
+        android:padding="10dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/neura_sdk_white_v" />
+
+    <ImageView
+        android:id="@+id/more_lable_bottom_shade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/place_feedback_fragment_done_btn"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/neura_sdk_more_lable_bottom_shade" />
+
+    <ListView
+        android:id="@+id/more_lable_picker_dialog_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/more_lable_bottom_shade"
+        android:layout_below="@id/more_lable_top_shade"
+        android:layout_marginBottom="5dp"
+        android:divider="@color/neura_sdk_light_gray_divider"
+        android:dividerHeight="1dp"
+        android:visibility="visible" />
+
+</RelativeLayout>

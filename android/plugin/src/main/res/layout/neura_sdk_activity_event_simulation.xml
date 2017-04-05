@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neura_sdk_light_gray_fill_selected">
+
+    <ListView
+        android:id="@+id/events_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header_events_simulation"
+        android:padding="10dp"/>
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/header_events_simulation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:padding="15dp"
+        android:text="@string/neura_sdk_simulate_an_event"
+        android:textColor="@color/neura_sdk_blue_btn"
+        android:textSize="20sp" />
+
+</RelativeLayout>

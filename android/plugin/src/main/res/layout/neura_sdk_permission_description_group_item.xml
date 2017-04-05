@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="7dp">
+
+    <ImageView
+        android:id="@+id/permission_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/permission_reason"
+        android:layout_alignTop="@+id/permission_reason"
+        android:src="@drawable/neura_sdk_ic_permission_placeholder" />
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/permission_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/permission_icon"
+        android:textColor="@color/neura_sdk_permission_grey"
+        android:textSize="14sp" />
+</RelativeLayout>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.neura.dashboard.view.widget.RobotoLightTextView
+        android:id="@+id/snackbar_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:textColor="@android:color/white" />
+
+    <com.neura.dashboard.view.widget.RobotoMediumTextView
+        android:id="@+id/snackbar_accept"
+        style="@style/neura_sdk_snack_bar_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/snackbar_text"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:textAllCaps="true" />
+
+    <com.neura.dashboard.view.widget.RobotoLightTextView
+        android:id="@+id/snackbar_dismiss"
+        style="@style/neura_sdk_snack_bar_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/snackbar_text"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/snackbar_accept"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:textAllCaps="true" />
+
+</RelativeLayout>
