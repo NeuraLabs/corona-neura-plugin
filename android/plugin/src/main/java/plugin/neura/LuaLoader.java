@@ -409,6 +409,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		if (L.isTable(1)){
 			Hashtable<Object, Object> params = CoronaLua.toHashtable(L, 1);
 			if (params.containsKey("deviceName")){
+				Log.d("Corona", "Adding devices with name: " + params.get("deviceName").toString());
 				mNeuraApiClient.addDevice(params.get("deviceName").toString(), callback);
 			}else if(params.containsKey("deviceCapabilityNames")){
 				Hashtable<Object, Object> deviceCapabilityNames = (Hashtable<Object, Object>)params.get("deviceCapabilityNames");
@@ -417,6 +418,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				for (Object name : names){
 					namesList.add(name.toString());
 				}
+				Log.d("Corona", "Adding devices with capabilities: " + namesList.toString());
 				result = mNeuraApiClient.addDevice(namesList, callback);
 			}else{
 				result = mNeuraApiClient.addDevice(callback);
