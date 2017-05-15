@@ -12,6 +12,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.content.Intent;
+import android.app.PendingIntent;
+import android.app.IntentService;
+import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.ansca.corona.CoronaEnvironment;
 import com.ansca.corona.storage.ResourceServices;
@@ -30,23 +35,213 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import com.ansca.corona.CoronaActivity;
+import com.ansca.corona.CoronaEnvironment;
+import android.app.AlarmManager;
+import android.content.SharedPreferences;
+
 public class NeuraEventsService extends FirebaseMessagingService {
+
+	/*public static boolean alarm1Snooze = false;
+	public static boolean alarm2Snooze = false;
+	public static boolean alarm3Snooze = false;*/
+	//public static boolean[] snoozeArray = new boolean[3];
+	//public static long[] snoozeStartTime = new long[3];
+	//public static boolean[] canCheckAlarm = new boolean[3];
+
 	@Override
 	public void onMessageReceived(RemoteMessage message) {
+		Log.i("Corona", "onMessageReceived");
 		Map data = message.getData();
+
+		String messageID = message.getMessageId();
+
 		if (NeuraPushCommandFactory.getInstance().isNeuraEvent(data)) {
 			NeuraEvent event = NeuraPushCommandFactory.getInstance().getEvent(data);
 			String eventText = event != null ? event.toString() : "couldn't parse data";
 
-			Log.i("Corona", "received Neura event - " + eventText);
+			//Log.i("Corona", "received Neura event - " + eventText);
 			HashMap<String, Object> params = new HashMap<>();
 			params.put("type", "Success");
 			params.put("data", data.get("pushData"));
 			LuaLoader.dispatch(params, "onNeuraMessageReceived", -1);
 
-			generateNotification(getApplicationContext(), event);
+
+			
+			//String PACKAGE_NAME = getApplicationContext().getPackageName();
+			//Log.i("Corona", "packagename = " + PACKAGE_NAME);
+			//String myDaysString = "mydays";	
+
+			SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("neuraplugin", 0);
+			boolean usingCustomReminders = mPrefs.getBoolean("usingCustomReminders", false);	
+
+			//Log.d("Corona", "usingCustomReminders retrieved as " + usingCustomReminders);
+			
+			if (usingCustomReminders == true)
+			{
+				checkForNeuraAlarm(getApplicationContext(), event);
+			}
+			else
+			{
+				generateNotification(getApplicationContext(), event);
+			}
 		}
 	}
+
+
+    /*public boolean doesNeuraAlarmExist(int id){
+		boolean doesExist = false;
+
+		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		if (activity != null){
+			Context context = activity.getApplicationContext();
+			Intent intent = new Intent(context, LuaLoader.NeuraAlarm.class);
+
+			//intent.setAction(Intent.ACTION_VIEW);
+			PendingIntent test = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_NO_CREATE);
+			if (test != null){
+				doesExist = true;
+			}
+		}
+		return doesExist;
+	}*/
+
+    private void checkForNeuraAlarm(Context context, NeuraEvent event) {
+    	/*for(int i=0; i<=9; i++){
+		    boolean alarmExists = doesNeuraAlarmExist(i);
+		    Log.d("Corona", "Alarm " + i + " Exists = " + alarmExists);
+		}*/
+		/*for(int i=0; i<snoozeArray.length; i++){
+		    Log.d("Corona", "Alarm " + i + " Exists = " + snoozeArray[i]);
+		}*/
+
+		String eventName = event.getEventName();
+		long now = System.currentTimeMillis();
+		long[] alarmWaitTimes = {300000, 2400000, 2400000};//300k = 5 mins, 2.4m = 40 mins
+
+		SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("neuraplugin", 0);
+		boolean isSnooze1 = mPrefs.getBoolean("isSnooze1", false);	
+		boolean isSnooze2 = mPrefs.getBoolean("isSnooze2", false);	
+		boolean isSnooze3 = mPrefs.getBoolean("isSnooze3", false);	
+
+		boolean canCheckAlarm1 = mPrefs.getBoolean("canCheckAlarm1", false);	
+		boolean canCheckAlarm2 = mPrefs.getBoolean("canCheckAlarm2", false);	
+		boolean canCheckAlarm3 = mPrefs.getBoolean("canCheckAlarm3", false);	
+
+		long snoozeStartTime1 = mPrefs.getLong("snoozeStartTime1", System.currentTimeMillis());
+		long snoozeStartTime2 = mPrefs.getLong("snoozeStartTime2", System.currentTimeMillis());
+		long snoozeStartTime3 = mPrefs.getLong("snoozeStartTime3", System.currentTimeMillis());
+
+		if (isSnooze1 == true){
+			String[] alarm1Triggers = { "userArrivedHome", "userArrivedToWork", "userFinishedWalking", "userFinishedRunning", "userFinishedDriving" };   
+			for(int i=0; i<alarm1Triggers.length; i++){   
+			    if (alarm1Triggers[i].equals(eventName)){
+			    	long diff = now - snoozeStartTime1;
+			    	if (diff >= alarmWaitTimes[0])
+			    	{
+			    		isSnooze1 = false;
+			    		snoozeStartTime1 = 0;
+
+						Intent alarmIntent = new Intent(context, LuaLoader.NeuraAlarm.class);
+					    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 4, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+					    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+				    	alarmManager.cancel(pendingIntent);
+
+			    	
+				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
+			        	alarmIntNew.putExtra("notificationCode",4);
+						alarmIntNew.putExtra("notificationType","pill");
+			        	context.startService(alarmIntNew);
+			        }
+			        else
+			        {
+			        	long remainingTime = alarmWaitTimes[0] - diff;
+			        	int seconds = (int) (remainingTime / 1000) % 60 ;
+						int minutes = (int) ((remainingTime / (1000*60)) % 60);
+						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
+
+						Log.d("Corona", "Too early to trigger alarm 1. Wait another "+minutes+":"+seconds);
+
+			        }
+			    }
+			}
+		}
+		if (isSnooze2 == true || canCheckAlarm2 == true){
+			String[] alarm2Triggers = { "userWokeUp","userGotUp","userArrivedHome","userArrivedToWork", "userFinishedWalking", "userFinishedRunning", "userFinishedDriving", "userArrivedAtPharmacy" };   
+			for(int i=0; i<alarm2Triggers.length; i++){         
+			    if (alarm2Triggers[i].equals(eventName)){
+			    	long diff = now - snoozeStartTime2;
+			    	if (diff >= alarmWaitTimes[1] || canCheckAlarm2 == true)
+			    	{
+			    		canCheckAlarm2 = false;
+				    	isSnooze2 = false;
+				    	snoozeStartTime2 = 0;
+
+				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
+			        	alarmIntNew.putExtra("notificationCode",5);
+						alarmIntNew.putExtra("notificationType","period");
+			        	context.startService(alarmIntNew);
+			        }
+			        else
+			        {
+			        	long remainingTime = alarmWaitTimes[1] - diff;
+			        	int seconds = (int) (remainingTime / 1000) % 60 ;
+						int minutes = (int) ((remainingTime / (1000*60)) % 60);
+						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
+
+						Log.d("Corona", "Too early to trigger alarm 2. Wait another "+minutes+":"+seconds);
+
+			        
+			        }
+			    }
+			}
+		}
+		if (isSnooze3 == true || canCheckAlarm3 == true){
+			String[] alarm3Triggers = { "userWokeUp","userGotUp","userArrivedHome","userArrivedToWork", "userFinishedWalking", "userFinishedRunning", "userFinishedDriving", "userArrivedAtPharmacy" };   
+			for(int i=0; i<alarm3Triggers.length; i++){         
+			    if (alarm3Triggers[i].equals(eventName)){
+			    	long diff = now - snoozeStartTime3;
+			    	if (diff >= alarmWaitTimes[2] || canCheckAlarm3 == true)
+			    	{
+			    		canCheckAlarm3 = false;
+				    	isSnooze3 = false;
+				    	snoozeStartTime3 = 0;
+
+				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
+			        	alarmIntNew.putExtra("notificationCode",6);
+						alarmIntNew.putExtra("notificationType","ovulation");
+			        	context.startService(alarmIntNew);
+			        }
+			        else
+			        {
+			        	long remainingTime = alarmWaitTimes[2] - diff;
+			        	int seconds = (int) (remainingTime / 1000) % 60 ;
+						int minutes = (int) ((remainingTime / (1000*60)) % 60);
+						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
+
+						Log.d("Corona", "Too early to trigger alarm 3. Wait another "+minutes+":"+seconds);
+
+			        
+			        }
+			    }	
+			}
+		}
+
+		SharedPreferences.Editor mEditor = mPrefs.edit();
+		mEditor.putBoolean("isSnooze1", isSnooze1).commit();
+		mEditor.putBoolean("isSnooze2", isSnooze2).commit();
+		mEditor.putBoolean("isSnooze3", isSnooze3).commit();
+
+		mEditor.putBoolean("canCheckAlarm1", canCheckAlarm1).commit();
+		mEditor.putBoolean("canCheckAlarm2", canCheckAlarm2).commit();
+		mEditor.putBoolean("canCheckAlarm3", canCheckAlarm3).commit();
+
+		mEditor.putLong("snoozeStartTime1", snoozeStartTime1).commit();
+		mEditor.putLong("snoozeStartTime2", snoozeStartTime2).commit();
+		mEditor.putLong("snoozeStartTime3", snoozeStartTime3).commit();
+
+    }
+
 
 	private void generateNotification(Context context, NeuraEvent event) {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);

@@ -65,6 +65,21 @@ import java.util.List;
 import java.util.Map;
 
 
+import java.util.Calendar;
+import android.app.AlarmManager;
+import com.ansca.corona.storage.ResourceServices;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.content.Intent;
+import android.app.IntentService;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.app.Notification;
+import android.content.SharedPreferences;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	// Neura
@@ -76,6 +91,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
+
+    public static final String ACTION_1 = "pressOK";
+    public static final String ACTION_2 = "pressSnooze";
+
+    //Neura alarm types
+    /*	1-3 = actual alarms
+		4-6 = snooze alarms
+		7-9 = temp alarms
+
+		go together like so: 1/4/7,  2/5/8,  3/6/9 
+		//alarm 1 being snoozed would activate alarm 4, with alarm 7 being used if a 3rd alarm is ever needed for that particular notification
+    */
 
 	@SuppressWarnings("unused")
 	public LuaLoader() {
@@ -125,6 +152,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				new SubscribeToEventWrapper(),
 				new RegisterNotificationForEventWrapper(),
 				new UnregisterNotificationForEventWrapper(),
+				new SetReminderWrapper(),
+				new CancelReminderWrapper(),
+
 
 		};
 		String libName = L.toString( 1 );
@@ -133,6 +163,634 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		// Returning 1 indicates that the Lua require() function will return the above Lua library.
 		return 1;
 	}
+
+	/*public boolean doesAlarmExist(int id){
+		boolean doesExist = false;
+
+		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		if (activity != null){
+			Context context = activity.getApplicationContext();
+			Intent intent = new Intent(context, NeuraAlarm.class);
+			//intent.setAction(Intent.ACTION_VIEW);
+			PendingIntent test = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_NO_CREATE);
+			if (test != null){
+				doesExist = true;
+			}
+		}
+		return doesExist;
+	}*/
+
+
+	public static class NeuraAlarmService extends IntentService
+	{
+
+		/** 
+		* A constructor is required, and must call the super IntentService(String)
+		* constructor with a name for the worker thread.
+		*/
+
+		public NeuraAlarmService() {
+		  super("NeuraAlarmService");
+		}
+
+		/**
+		* The IntentService calls this method from the default worker thread with
+		* the intent that started the service. When this method returns, IntentService
+		* stops the service, as appropriate.
+		*/
+
+		@Override
+		protected void onHandleIntent(Intent theIntent) {
+
+			int notificationCode= theIntent.getIntExtra("notificationCode", 1);
+       		String notificationType = theIntent.getStringExtra("notificationType");
+
+       		if (notificationCode == 2 || notificationCode == 3)
+       		{	
+       			Context context = getApplicationContext();
+       			SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+				SharedPreferences.Editor mEditor = mPrefs.edit();
+				mEditor.putBoolean("canCheckAlarm"+notificationCode, true).commit();
+       		}
+       		else
+       		{
+				Context context = getApplicationContext();
+
+				NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+
+				ResourceServices resourceServices = new ResourceServices(context);
+				Intent action1Intent = new Intent(context, NotificationActionService.class)
+				    .setAction(ACTION_1+notificationType);
+				Bundle intent1Bundle = new Bundle();            
+				intent1Bundle.putInt("clickIndex", 1);
+				intent1Bundle.putInt("notificationCode", notificationCode);
+				intent1Bundle.putString("notificationType", notificationType);
+				action1Intent.putExtras(intent1Bundle);
+
+				PendingIntent action1PendingIntent = PendingIntent.getService(context, 0,
+				        action1Intent, PendingIntent.FLAG_ONE_SHOT);
+
+				Intent action2Intent = new Intent(context, NotificationActionService.class)
+				    .setAction(ACTION_2+notificationType);
+
+				Bundle intent2Bundle = new Bundle();            
+				intent2Bundle.putInt("clickIndex", 2);
+				intent2Bundle.putInt("notificationCode", notificationCode);
+				intent2Bundle.putString("notificationType", notificationType);
+				action2Intent.putExtras(intent2Bundle);
+
+				PendingIntent action2PendingIntent = PendingIntent.getService(context, 0,
+				        action2Intent, PendingIntent.FLAG_ONE_SHOT);
+
+				String bodyText = "";
+				String username = "you";
+				String button1Text = "Took Pill";
+				//make first letter of notification type upper case
+				String notificationTitle = notificationType.substring(0,1).toUpperCase() + notificationType.substring(1).toLowerCase();
+				int numDays = 1; //need to have this provided by lua code
+				String timetext = "in "+numDays+" days";
+				if (numDays == 1){
+					timetext = "tomorrow";
+				}else if (numDays == 0){
+					timetext = "today";
+				}
+
+				/*“Period is expected to start in %N% days for %user%”
+					If1day=“in%N%days”>“tomorrow”
+					If0days=“in%N%days”>“today”*/
+
+				/*	
+					“Ovulation is expected to start in %N% days for %user%”
+					 If1day=“in%N%days”>“tomorrow” o If0days=“in%N%days”>“today”
+				*/
+
+
+				if (notificationType.equals("pill")) {
+					bodyText = "Time for " + username + " to take a pill";
+
+					SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+					SharedPreferences.Editor mEditor = mPrefs.edit();
+					mEditor.putBoolean("isSnooze1", false).commit();
+					mEditor.putLong("snoozeStartTime1", 0).commit();
+
+					//NeuraEventsService.snoozeArray[0] = false;
+					//NeuraEventsService.snoozeStartTime[0] = 0;
+				} else if (notificationType.equals("period")) {
+					bodyText = "Period is expected to start "+ timetext + " for " + username;
+					button1Text = "Dismiss";
+					SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+					SharedPreferences.Editor mEditor = mPrefs.edit();
+					mEditor.putBoolean("isSnooze2", false).commit();
+					mEditor.putLong("snoozeStartTime2", 0).commit();
+
+					//NeuraEventsService.snoozeArray[1] = false;
+					//NeuraEventsService.snoozeStartTime[1] = 0;
+				} else if (notificationType.equals("ovulation")) {
+					bodyText = "Ovulation is expected to start "+ timetext + " for " + username;
+					button1Text = "Dismiss";
+
+					SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+					SharedPreferences.Editor mEditor = mPrefs.edit();
+					mEditor.putBoolean("isSnooze3", false).commit();
+					mEditor.putLong("snoozeStartTime3", 0).commit();
+
+					//NeuraEventsService.snoozeArray[2] = false;
+					//NeuraEventsService.snoozeStartTime[2] = 0;
+				}
+
+				//Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+				//.setSound(alarmSound) 
+
+				NotificationCompat.Builder notificationBuilder =
+				        new NotificationCompat.Builder(context)
+				                .setSmallIcon(resourceServices.getDrawableResourceId("corona_statusbar_icon_default"))
+				                .setContentTitle(notificationTitle + " reminder")
+				                .setContentText(bodyText)
+				                .setTicker(bodyText)
+				                .setDefaults(Notification.DEFAULT_SOUND)
+				                .setAutoCancel(true)
+				                .addAction(new NotificationCompat.Action(resourceServices.getDrawableResourceId("neura_sdk_symbol"), button1Text, action1PendingIntent))
+				               	.addAction(new NotificationCompat.Action(resourceServices.getDrawableResourceId("corona_statusbar_icon_default"), "Snooze", action2PendingIntent))
+				               	.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+				
+
+				NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+				Notification notif = notificationBuilder.build();
+	    		notif.flags |= Notification.FLAG_AUTO_CANCEL;
+				notificationManager.notify(notificationCode, notif);
+
+				/*Intent alarmIntent = new Intent(this, NeuraAlarm.class);
+				long scTime = 60*1000;//mins
+				PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+				AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+				alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + scTime, pendingIntent);*/
+
+				//wake the screen for 3 seconds when notification is received
+		        int seconds = 3;
+		        PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+		        boolean isScreenOn = pm.isScreenOn();
+
+		        if( !isScreenOn )
+		        {
+		        WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.ON_AFTER_RELEASE,"MyLock");
+		        wl.acquire(seconds*1000);
+		        WakeLock wl_cpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"MyCpuLock");
+		        wl_cpu.acquire(seconds*1000);
+		        }
+
+
+			}
+			stopService(theIntent);
+		}
+    }
+
+	public static class NeuraAlarm extends BroadcastReceiver
+    {
+    	public NeuraAlarm() {
+		  //super(NeuraAlarm.class.getSimpleName());
+		}
+
+       	@Override
+       	public void onReceive(Context context, Intent alarmIntent) {
+
+       		int notificationCode= alarmIntent.getIntExtra("notificationCode", 1);
+       		String notificationType = alarmIntent.getStringExtra("notificationType");
+       		String isSnooze = alarmIntent.getStringExtra("isSnooze");
+
+        	Intent i = new Intent(context, NeuraAlarmService.class);
+        	i.putExtra("notificationCode",notificationCode);
+			i.putExtra("notificationType",notificationType);
+        	context.startService(i);
+
+        	int repeatingDays = alarmIntent.getIntExtra("repeatingDays", 0);
+        	//when repeatingDays = -1 then it is to be repeated indefinitely
+        	if (repeatingDays < 0){
+        		Calendar calendar = Calendar.getInstance();
+				calendar.setTimeInMillis(System.currentTimeMillis());
+				calendar.add(Calendar.DATE, 1);
+
+				Intent repeatAlarmIntent = new Intent(context, NeuraAlarm.class);
+				repeatAlarmIntent.putExtra("notificationCode",notificationCode);
+				repeatAlarmIntent.putExtra("notificationType",notificationType);
+				repeatAlarmIntent.putExtra("isSnooze",isSnooze);
+				repeatAlarmIntent.putExtra("repeatingDays", repeatingDays);
+			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_ONE_SHOT);
+			    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+
+			    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        	} else if (repeatingDays > 0){
+        		//when repeatingDays > 0 set a reminder for the next day and decrease repeatingDays by 1
+
+        		repeatingDays = repeatingDays - 1;
+        		Calendar calendar = Calendar.getInstance();
+				calendar.setTimeInMillis(System.currentTimeMillis());
+				calendar.add(Calendar.DATE, 1);//add one day
+				//calendar.add(Calendar.MINUTE, 1);
+
+				Intent repeatAlarmIntent = new Intent(context, NeuraAlarm.class);
+				repeatAlarmIntent.putExtra("notificationCode",notificationCode);
+				repeatAlarmIntent.putExtra("notificationType",notificationType);
+				repeatAlarmIntent.putExtra("isSnooze",isSnooze);
+				repeatAlarmIntent.putExtra("repeatingDays", repeatingDays);
+			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_ONE_SHOT);
+			    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+
+			    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        	}
+       	}
+    }
+
+
+
+    public static class NotificationActionService extends IntentService {
+        public NotificationActionService() {
+            super(NotificationActionService.class.getSimpleName());
+        }
+
+        @Override
+        protected void onHandleIntent(Intent notificationIntent) {
+
+            String action = notificationIntent.getAction();
+            int notificationCode= notificationIntent.getIntExtra("notificationCode", 1);
+       		String notificationType = notificationIntent.getStringExtra("notificationType");
+
+            int id_to_cancel = 0;
+
+            if (action.equals(ACTION_1+"pill")) {
+            	NotificationManagerCompat.from(this).cancel(1);//actual alarm notification
+            	NotificationManagerCompat.from(this).cancel(4);//snooze notification
+       			if (notificationType.equals("pill")){
+	                Intent coronaIntent = new Intent(this, com.ansca.corona.CoronaActivity.class);
+					coronaIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+					Bundle coronaIntentBundle = new Bundle();  
+					coronaIntentBundle.putInt("clickIndex", 1);
+					coronaIntentBundle.putInt("notificationCode", notificationCode);
+					coronaIntentBundle.putString("notificationType", notificationType);          
+				    coronaIntent.putExtras(coronaIntentBundle);
+
+					startActivity(coronaIntent);
+				}
+				else
+				{
+					Log.d("Corona", "Dismissed Notification");
+				}
+            } else if (action.equals(ACTION_1+"period")){
+            	NotificationManagerCompat.from(this).cancel(2);//actual alarm notification
+            	NotificationManagerCompat.from(this).cancel(5);//snooze notification
+            } else if (action.equals(ACTION_1+"ovulation")){
+            	NotificationManagerCompat.from(this).cancel(3);//actual alarm notification
+            	NotificationManagerCompat.from(this).cancel(6);//snooze notification
+
+            }else{
+            	String newNotificationType = action.replace(ACTION_2, "");
+
+				Context context = this;//activity.getApplicationContext();
+
+            	final int alarm_broadcast_ID;
+				if (newNotificationType.equals("pill")){
+					NotificationManagerCompat.from(this).cancel(1);//actual alarm notification
+            		NotificationManagerCompat.from(this).cancel(4);//snooze notification
+            		//NeuraEventsService.snoozeArray[0] = true;
+            		//NeuraEventsService.snoozeStartTime[0] = System.currentTimeMillis();
+            		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+					SharedPreferences.Editor mEditor = mPrefs.edit();
+					mEditor.putBoolean("isSnooze1", true).commit();
+					mEditor.putLong("snoozeStartTime1", System.currentTimeMillis()).commit();
+
+				    alarm_broadcast_ID = 4;
+				} else if (newNotificationType.equals("period")){
+					NotificationManagerCompat.from(this).cancel(2);//actual alarm notification
+            		NotificationManagerCompat.from(this).cancel(5);//snooze notification
+            		//NeuraEventsService.snoozeArray[1] = true;
+            		//NeuraEventsService.snoozeStartTime[1] = System.currentTimeMillis();
+            		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+					SharedPreferences.Editor mEditor = mPrefs.edit();
+					mEditor.putBoolean("isSnooze2", true).commit();
+					mEditor.putLong("snoozeStartTime2", System.currentTimeMillis()).commit();
+
+					alarm_broadcast_ID = 5;
+				} else if (newNotificationType.equals("ovulation")){
+					alarm_broadcast_ID = 6;
+					NotificationManagerCompat.from(this).cancel(3);//actual alarm notification
+            		NotificationManagerCompat.from(this).cancel(6);//snooze notification
+            		//NeuraEventsService.snoozeArray[2] = true;
+            		//NeuraEventsService.snoozeStartTime[2] = System.currentTimeMillis();
+            		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+					SharedPreferences.Editor mEditor = mPrefs.edit();
+					mEditor.putBoolean("isSnooze3", true).commit();
+					mEditor.putLong("snoozeStartTime3", System.currentTimeMillis()).commit();
+				} else {
+				    alarm_broadcast_ID = 0;
+				}
+				//cal.set(Calendar.SECOND, 0);
+		    	//cal.set(Calendar.MILLISECOND, 0);
+
+				if (alarm_broadcast_ID > 0)
+				{
+
+					Intent alarmIntent = new Intent(this, NeuraAlarm.class);
+					alarmIntent.putExtra("notificationCode",alarm_broadcast_ID);
+					alarmIntent.putExtra("notificationType",newNotificationType);
+					alarmIntent.putExtra("snoozeStartTime", System.currentTimeMillis());
+					alarmIntent.putExtra("isSnooze","yes");
+				    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarm_broadcast_ID, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+				    AlarmManager alarmManager = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+
+			    	Calendar calendar = Calendar.getInstance();
+			    	calendar.setTimeInMillis(System.currentTimeMillis());
+
+					// add 25/60 mins to the calendar object
+					if (alarm_broadcast_ID < 5)
+					{
+						calendar.add(Calendar.MINUTE, 25);	
+					}
+					else
+					{
+						calendar.add(Calendar.MINUTE, 60);	
+					}
+					//
+			    	alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+			    }
+            }
+    	}
+
+    	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+		public static void cancelSnooze(int i){
+			Context context = getActivity().getApplicationContext();
+			Intent alarmIntent = new Intent(context, NeuraAlarm.class);
+		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+		    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+	    	alarmManager.cancel(pendingIntent);
+		}*/
+	}
+
+
+    
+
+
+	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int setReminder(LuaState L) {
+
+		int hour = 9;
+		int minute = 0;
+		int second = 0;
+		int month = Calendar.getInstance().get(Calendar.MONTH);
+		int day = Calendar.getInstance().get(Calendar.DATE);
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		boolean repeatDaily = false;
+		String reminderType = "";
+		int repeatingDays = 0;
+
+
+        // If an options table has been passed
+        if ( L.isTable( -1 ) )
+        {
+            // Get the app key
+            L.getField( -1, "reminderType" );
+            if ( L.isString( -1 ) )
+            {
+                reminderType = L.checkString( -1 );
+            }
+            else
+            {
+                System.out.println( "Error: reminderType expected, got " + L.typeName( -1 ) );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "repeatDaily" );
+            if ( L.isBoolean( -1 ) )
+            {
+                repeatDaily = L.checkBoolean( -1 );
+            }
+            L.pop( 1 );
+
+            L.getField( -1, "repeatingDays" );
+            if ( L.isNumber( -1 ) )
+            {
+                repeatingDays = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "hour" );
+            if ( L.isNumber( -1 ) )
+            {
+                hour = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "minute" );
+            if ( L.isNumber( -1 ) )
+            {
+                minute = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "second" );
+            if ( L.isNumber( -1 ) )
+            {
+                second = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "day" );
+            if ( L.isNumber( -1 ) )
+            {
+                day = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "month" );
+            if ( L.isNumber( -1 ) )
+            {
+                month = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "year" );
+            if ( L.isNumber( -1 ) )
+            {
+                year = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+        }
+
+		if (reminderType.equals("")){
+			Log.e("Corona", "neura.setReminder() takes table as first argument with reminderType as required key.");
+			return 0;
+		}
+
+		final int alarm_broadcast_ID;
+		String isSuccess = "Success";
+		if (reminderType.equals("pill")){
+		    alarm_broadcast_ID = 1;
+		} else if (reminderType.equals("period")){
+			alarm_broadcast_ID = 2;
+		} else if (reminderType.equals("ovulation")){
+			alarm_broadcast_ID = 3;
+		} else {
+		    alarm_broadcast_ID = 0;
+		    isSuccess = "Error";
+		}
+
+		if (alarm_broadcast_ID > 0)
+		{
+	    	Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.set(Calendar.HOUR_OF_DAY, hour);
+			calendar.set(Calendar.MINUTE, minute);
+			calendar.set(Calendar.SECOND, second);
+
+
+			CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			Context context = activity.getApplicationContext();
+
+			Intent alarmIntent = new Intent(context, NeuraAlarm.class);
+			alarmIntent.putExtra("notificationCode",alarm_broadcast_ID);
+			alarmIntent.putExtra("notificationType",reminderType);
+			alarmIntent.putExtra("isSnooze","no");
+			alarmIntent.putExtra("repeatingDays", repeatingDays);
+
+		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm_broadcast_ID, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+		    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+
+		    if (repeatDaily)
+		    {
+		    	//set once, will be set again when it goes off. only way to have the alarm go off at a fixed time, 
+		    	//otherwise android will trigger the alarm any time between the target time and the interval period until next alarm.
+		    	alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+		    }
+		    else
+		    {
+		    	alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+		    }
+		}
+		else
+		{
+			//Log.d("Corona", "alarm_broadcast_ID is less than 1");
+		}
+	    
+	    
+
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("type", isSuccess);
+		Hashtable<String, String> eventData = new Hashtable<String, String>();
+		eventData.put("eventName", "setReminder");
+		eventData.put("eventIdentifier", "");
+		params.put("event", eventData);
+		dispatch(params, "setReminder", fListener);
+
+		return 0;
+	}
+
+	@SuppressWarnings("unused")
+	private class SetReminderWrapper implements NamedJavaFunction {
+
+		@Override
+		public String getName() {
+			return "setReminder";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return setReminder(L);
+		}
+	}
+
+	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int cancelReminder(LuaState L) {
+
+		String reminderType = "";
+
+
+        // If an options table has been passed
+        if ( L.isTable( -1 ) )
+        {
+            // Get the app key
+            L.getField( -1, "reminderType" );
+            if ( L.isString( -1 ) )
+            {
+                reminderType = L.checkString( -1 );
+            }
+            else
+            {
+                System.out.println( "Error: reminderType expected, got " + L.typeName( -1 ) );
+            }
+            L.pop( 1 );
+        }
+
+		if (reminderType.equals("")){
+			Log.e("Corona", "neura.cancelReminder() takes table as first argument with reminderType as required key.");
+			return 0;
+		}
+
+		String isSuccess = "Success";
+		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		Context context = activity.getApplicationContext();
+		Intent alarmIntent = new Intent(context, NeuraAlarm.class);
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+
+		
+		if (reminderType.equals("pill")){
+		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	alarmManager.cancel(pendingIntent);
+	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 4, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	alarmManager.cancel(pendingIntentSnooze);
+
+		} else if (reminderType.equals("period")){
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 2, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	alarmManager.cancel(pendingIntent);
+	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 5, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	alarmManager.cancel(pendingIntentSnooze);
+
+		} else if (reminderType.equals("ovulation")){
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 3, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	alarmManager.cancel(pendingIntent);
+	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 6, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	alarmManager.cancel(pendingIntentSnooze);
+
+		} else {
+		    isSuccess = "Error";
+		}
+
+
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("type", isSuccess);
+		Hashtable<String, String> eventData = new Hashtable<String, String>();
+		eventData.put("eventName", "cancelReminder");
+		eventData.put("eventIdentifier", "");
+		params.put("event", eventData);
+		dispatch(params, "cancelReminder", fListener);
+
+		return 0;
+	}
+
+
+	@SuppressWarnings("unused")
+	private class CancelReminderWrapper implements NamedJavaFunction {
+
+		@Override
+		public String getName() {
+			return "cancelReminder";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return cancelReminder(L);
+		}
+	}
+
+
 
 	@Override
 	public void onLoaded(CoronaRuntime runtime) {
@@ -185,7 +843,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				}
 			}
 		};
-		fDispatcher.send(task);
+		if (fDispatcher != null && fDispatcher.isRuntimeAvailable()){
+			fDispatcher.send(task);
+		}
+		else
+		{
+			//sometimes the runtime is not available, e.g. if this function is call as a result of a push message while the app is closed
+			Log.e("Corona", "Unable to dispatch event ");
+		}
 	}
 
 	public static void dispatchOnFailure(Bundle bundle, int errorCode, String eventName, int listener){
@@ -225,13 +890,20 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		Hashtable<Object, Object> args = CoronaLua.toHashtable(L, 1);
 		String appUid = args.get("appUid").toString();
 		String appSecret = args.get("appSecret").toString();
+		boolean usingCustomReminders = (boolean) args.get("usingCustomReminders");
+
+		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		Context context = activity.getApplicationContext();
+
+		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+		SharedPreferences.Editor mEditor = mPrefs.edit();
+		mEditor.putBoolean("usingCustomReminders", usingCustomReminders).commit();
 
 		if (appSecret.equals("") || appUid.equals("")){
 			Log.e("Corona", "neura.connect() takes table as first argument with appUid and appSecret as required keys.");
 			return 0;
 		}
 
-		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 		Builder builder = new Builder(activity.getApplicationContext());
 		mNeuraApiClient = builder.build();
 		mNeuraApiClient.setAppUid(appUid);
@@ -261,6 +933,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			}
 
 		}
+
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("type", "Success");
+		Hashtable<String, String> eventData = new Hashtable<String, String>();
+		eventData.put("eventName", "connect");
+		eventData.put("eventIdentifier", "");
+		params.put("event", eventData);
+		dispatch(params, "connect", fListener);
 
 		return 0;
 	}
