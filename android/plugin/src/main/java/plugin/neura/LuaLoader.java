@@ -204,18 +204,20 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 			int notificationCode= theIntent.getIntExtra("notificationCode", 1);
        		String notificationType = theIntent.getStringExtra("notificationType");
+       		int repeatingDays = theIntent.getIntExtra("repeatingDays", 0);
+
+       		Context context = getApplicationContext();
+
+       		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+       		SharedPreferences.Editor mEditor = mPrefs.edit();
+			boolean isDebug = mPrefs.getBoolean("isDebug", false);
 
        		if (notificationCode == 2 || notificationCode == 3)
-       		{	
-       			Context context = getApplicationContext();
-       			SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
-				SharedPreferences.Editor mEditor = mPrefs.edit();
-				mEditor.putBoolean("canCheckAlarm"+notificationCode, true).commit();
+       		{					
+				mEditor.putBoolean("canCheckAlarm"+notificationCode, true);
        		}
        		else
        		{
-				Context context = getApplicationContext();
-
 				NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
 				ResourceServices resourceServices = new ResourceServices(context);
@@ -228,7 +230,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				action1Intent.putExtras(intent1Bundle);
 
 				PendingIntent action1PendingIntent = PendingIntent.getService(context, 0,
-				        action1Intent, PendingIntent.FLAG_ONE_SHOT);
+				        action1Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 				Intent action2Intent = new Intent(context, NotificationActionService.class)
 				    .setAction(ACTION_2+notificationType);
@@ -240,18 +242,25 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				action2Intent.putExtras(intent2Bundle);
 
 				PendingIntent action2PendingIntent = PendingIntent.getService(context, 0,
-				        action2Intent, PendingIntent.FLAG_ONE_SHOT);
+				        action2Intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 				String bodyText = "";
-				String username = "you";
 				String button1Text = "Took Pill";
 
-				SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("neuraplugin", 0);
-				String username = mPrefs.getString("username");
+				String username = mPrefs.getString("username", "you");
 
 				//make first letter of notification type upper case
 				String notificationTitle = notificationType.substring(0,1).toUpperCase() + notificationType.substring(1).toLowerCase();
-				int numDays = 1; //need to have this provided by lua code
+				int numDays = repeatingDays; 
+
+				if (notificationType.equals("period")){
+					numDays = mPrefs.getInt("periodRepeatingDays", 0);
+					
+				} else if (notificationType.equals("ovulation")){
+					numDays = mPrefs.getInt("ovulationRepeatingDays", 0);
+				}
+		
+
 				String timetext = "in "+numDays+" days";
 				if (numDays == 1){
 					timetext = "tomorrow";
@@ -272,20 +281,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				if (notificationType.equals("pill")) {
 					bodyText = "Time for " + username + " to take a pill";
 
-					SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
-					SharedPreferences.Editor mEditor = mPrefs.edit();
-					mEditor.putBoolean("isSnooze1", false).commit();
-					mEditor.putLong("snoozeStartTime1", 0).commit();
+					mEditor.putBoolean("isSnooze1", false);
+					mEditor.putLong("snoozeStartTime1", 0);
 
 					//NeuraEventsService.snoozeArray[0] = false;
 					//NeuraEventsService.snoozeStartTime[0] = 0;
 				} else if (notificationType.equals("period")) {
 					bodyText = "Period is expected to start "+ timetext + " for " + username;
 					button1Text = "Dismiss";
-					SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
-					SharedPreferences.Editor mEditor = mPrefs.edit();
-					mEditor.putBoolean("isSnooze2", false).commit();
-					mEditor.putLong("snoozeStartTime2", 0).commit();
+					mEditor.putBoolean("isSnooze2", false);
+					mEditor.putLong("snoozeStartTime2", 0);
 
 					//NeuraEventsService.snoozeArray[1] = false;
 					//NeuraEventsService.snoozeStartTime[1] = 0;
@@ -293,15 +298,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					bodyText = "Ovulation is expected to start "+ timetext + " for " + username;
 					button1Text = "Dismiss";
 
-					SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
-					SharedPreferences.Editor mEditor = mPrefs.edit();
-					mEditor.putBoolean("isSnooze3", false).commit();
-					mEditor.putLong("snoozeStartTime3", 0).commit();
+					mEditor.putBoolean("isSnooze3", false);
+					mEditor.putLong("snoozeStartTime3", 0);
 
 					//NeuraEventsService.snoozeArray[2] = false;
 					//NeuraEventsService.snoozeStartTime[2] = 0;
 				}
 
+				
 				//Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 				//.setSound(alarmSound) 
 
@@ -337,14 +341,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 		        if( !isScreenOn )
 		        {
-		        WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.ON_AFTER_RELEASE,"MyLock");
-		        wl.acquire(seconds*1000);
-		        WakeLock wl_cpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"MyCpuLock");
-		        wl_cpu.acquire(seconds*1000);
+			        WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.ON_AFTER_RELEASE,"MyLock");
+			        wl.acquire(seconds*1000);
+			        WakeLock wl_cpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"MyCpuLock");
+			        wl_cpu.acquire(seconds*1000);
 		        }
-
-
 			}
+
+			mEditor.commit();
+
 			stopService(theIntent);
 		}
     }
@@ -358,16 +363,27 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
        	@Override
        	public void onReceive(Context context, Intent alarmIntent) {
 
+
        		int notificationCode= alarmIntent.getIntExtra("notificationCode", 1);
        		String notificationType = alarmIntent.getStringExtra("notificationType");
-       		String isSnooze = alarmIntent.getStringExtra("isSnooze");
 
-        	Intent i = new Intent(context, NeuraAlarmService.class);
-        	i.putExtra("notificationCode",notificationCode);
-			i.putExtra("notificationType",notificationType);
-        	context.startService(i);
+       		//String isSnooze = alarmIntent.getStringExtra("isSnooze");
+       		int repeatingDays = alarmIntent.getIntExtra("repeatingDays", 0);
 
-        	int repeatingDays = alarmIntent.getIntExtra("repeatingDays", 0);
+       		//Context applicationContext = context.getApplicationContext();
+       		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+       		SharedPreferences.Editor mEditor = mPrefs.edit();
+			boolean isDebug = mPrefs.getBoolean("isDebug", false);
+
+
+			if (notificationType.equals("period")){
+				int alreadyStored = mPrefs.getInt("periodRepeatingDays", 0);
+				mEditor.putInt("periodRepeatingDays", repeatingDays); //this is not being recognised for some reason?! different context maybe?
+
+			} else if (notificationType.equals("ovulation")){
+				mEditor.putInt("ovulationRepeatingDays", repeatingDays);
+			}
+	
         	//when repeatingDays = -1 then it is to be repeated indefinitely
         	if (repeatingDays < 0){
         		Calendar calendar = Calendar.getInstance();
@@ -377,9 +393,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				Intent repeatAlarmIntent = new Intent(context, NeuraAlarm.class);
 				repeatAlarmIntent.putExtra("notificationCode",notificationCode);
 				repeatAlarmIntent.putExtra("notificationType",notificationType);
-				repeatAlarmIntent.putExtra("isSnooze",isSnooze);
+				//repeatAlarmIntent.putExtra("isSnooze",isSnooze);
 				repeatAlarmIntent.putExtra("repeatingDays", repeatingDays);
-			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_ONE_SHOT);
+			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 
 			    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
@@ -390,19 +406,35 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         		repeatingDays = repeatingDays - 1;
         		Calendar calendar = Calendar.getInstance();
 				calendar.setTimeInMillis(System.currentTimeMillis());
-				calendar.add(Calendar.DATE, 1);//add one day
-				//calendar.add(Calendar.MINUTE, 1);
 
+				if (isDebug == true){
+					calendar.add(Calendar.MINUTE, 1);
+				}
+				else {
+					calendar.add(Calendar.DATE, 1);//add one day
+				}
+
+				
 				Intent repeatAlarmIntent = new Intent(context, NeuraAlarm.class);
 				repeatAlarmIntent.putExtra("notificationCode",notificationCode);
 				repeatAlarmIntent.putExtra("notificationType",notificationType);
-				repeatAlarmIntent.putExtra("isSnooze",isSnooze);
+				//repeatAlarmIntent.putExtra("isSnooze",isSnooze);
 				repeatAlarmIntent.putExtra("repeatingDays", repeatingDays);
-			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_ONE_SHOT);
+			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 
 			    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         	}
+
+
+
+			mEditor.commit();
+
+        	Intent i = new Intent(context, NeuraAlarmService.class);
+        	i.putExtra("notificationCode",notificationCode);
+			i.putExtra("notificationType",notificationType);
+			i.putExtra("repeatingDays",repeatingDays);
+        	context.startService(i);
        	}
     }
 
@@ -453,16 +485,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 				Context context = this;//activity.getApplicationContext();
 
+				SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+				SharedPreferences.Editor mEditor = mPrefs.edit();
+
             	final int alarm_broadcast_ID;
 				if (newNotificationType.equals("pill")){
 					NotificationManagerCompat.from(this).cancel(1);//actual alarm notification
             		NotificationManagerCompat.from(this).cancel(4);//snooze notification
             		//NeuraEventsService.snoozeArray[0] = true;
             		//NeuraEventsService.snoozeStartTime[0] = System.currentTimeMillis();
-            		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
-					SharedPreferences.Editor mEditor = mPrefs.edit();
-					mEditor.putBoolean("isSnooze1", true).commit();
-					mEditor.putLong("snoozeStartTime1", System.currentTimeMillis()).commit();
+					mEditor.putBoolean("isSnooze1", true);
+					mEditor.putLong("snoozeStartTime1", System.currentTimeMillis());
 
 				    alarm_broadcast_ID = 4;
 				} else if (newNotificationType.equals("period")){
@@ -470,10 +503,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             		NotificationManagerCompat.from(this).cancel(5);//snooze notification
             		//NeuraEventsService.snoozeArray[1] = true;
             		//NeuraEventsService.snoozeStartTime[1] = System.currentTimeMillis();
-            		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
-					SharedPreferences.Editor mEditor = mPrefs.edit();
-					mEditor.putBoolean("isSnooze2", true).commit();
-					mEditor.putLong("snoozeStartTime2", System.currentTimeMillis()).commit();
+					mEditor.putBoolean("isSnooze2", true);
+					mEditor.putLong("snoozeStartTime2", System.currentTimeMillis());
 
 					alarm_broadcast_ID = 5;
 				} else if (newNotificationType.equals("ovulation")){
@@ -482,10 +513,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             		NotificationManagerCompat.from(this).cancel(6);//snooze notification
             		//NeuraEventsService.snoozeArray[2] = true;
             		//NeuraEventsService.snoozeStartTime[2] = System.currentTimeMillis();
-            		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
-					SharedPreferences.Editor mEditor = mPrefs.edit();
-					mEditor.putBoolean("isSnooze3", true).commit();
-					mEditor.putLong("snoozeStartTime3", System.currentTimeMillis()).commit();
+					mEditor.putBoolean("isSnooze3", true);
+					mEditor.putLong("snoozeStartTime3", System.currentTimeMillis());
 				} else {
 				    alarm_broadcast_ID = 0;
 				}
@@ -499,8 +528,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					alarmIntent.putExtra("notificationCode",alarm_broadcast_ID);
 					alarmIntent.putExtra("notificationType",newNotificationType);
 					alarmIntent.putExtra("snoozeStartTime", System.currentTimeMillis());
-					alarmIntent.putExtra("isSnooze","yes");
-				    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarm_broadcast_ID, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+					//alarmIntent.putExtra("isSnooze","yes");
+				    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarm_broadcast_ID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				    AlarmManager alarmManager = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
 
 			    	Calendar calendar = Calendar.getInstance();
@@ -526,6 +555,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			    		alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 			    	}
 			    }
+
+			    mEditor.commit();
             }
     	}
 
@@ -533,7 +564,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public static void cancelSnooze(int i){
 			Context context = getActivity().getApplicationContext();
 			Intent alarmIntent = new Intent(context, NeuraAlarm.class);
-		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 	    	alarmManager.cancel(pendingIntent);
 		}*/
@@ -556,6 +587,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		String reminderType = "";
 		int repeatingDays = 0;
 		String username = "you";
+		boolean isDebug = false;
 
 
         // If an options table has been passed
@@ -593,6 +625,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             if ( L.isNumber( -1 ) )
             {
                 repeatingDays = (int) L.checkNumber( -1 );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "isDebug" );
+            if ( L.isBoolean( -1 ) )
+            {
+                isDebug = L.checkBoolean( -1 );
             }
             L.pop( 1 );
 
@@ -675,13 +715,25 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			calendar.set(Calendar.MINUTE, minute);
 			calendar.set(Calendar.SECOND, second);
 
-			//if today's alarm time has already passed, set it for tomorrow instead
-			//not needed for period and ovulation reminder, since they are initially triggered by neura events rather than a fixed time
 			Calendar now = Calendar.getInstance();
 			now.setTimeInMillis(System.currentTimeMillis());
+
+			/*if (isDebug == true)
+			{
+				long diff = calendar.getTimeInMillis() - now.getTimeInMillis();
+				Log.d("Corona", "alarm will be activated in " + diff + "ms");
+			}*/
+			//if today's alarm time has already passed, set it for tomorrow instead
+			//not needed for period and ovulation reminder, since they are initially triggered by neura events rather than a fixed time
+			
 			if (calendar.getTimeInMillis() < now.getTimeInMillis() && reminderType.equals("pill")){
-				Log.d("Corona", "Already passed alarm time, set for tomorrow instead");
+
 				calendar.add(Calendar.DATE, 1);
+
+				/*if (isDebug == true)
+				{
+					Log.d("Corona", "Already passed alarm time, set for tomorrow instead");
+				}*/
 			}
 			
 
@@ -691,15 +743,22 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 			SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
 			SharedPreferences.Editor mEditor = mPrefs.edit();
-			mEditor.putString("username", username).commit();
+			mEditor.putString("username", username);
+			mEditor.putBoolean("isDebug", isDebug);
+
+			if (reminderType.equals("period")){
+				mEditor.putInt("periodRepeatingDays", repeatingDays);
+			} else if (reminderType.equals("ovulation")){
+				mEditor.putInt("ovulationRepeatingDays", repeatingDays);
+			}
 
 			Intent alarmIntent = new Intent(context, NeuraAlarm.class);
 			alarmIntent.putExtra("notificationCode",alarm_broadcast_ID);
 			alarmIntent.putExtra("notificationType",reminderType);
-			alarmIntent.putExtra("isSnooze","no");
+			//alarmIntent.putExtra("isSnooze","no");
 			alarmIntent.putExtra("repeatingDays", repeatingDays);
 
-		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm_broadcast_ID, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm_broadcast_ID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 
 		    if (repeatDaily)
@@ -712,6 +771,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		    {
 		    	alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 		    }
+
+		    mEditor.commit();
 		}
 		else
 		{
@@ -778,28 +839,45 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		Intent alarmIntent = new Intent(context, NeuraAlarm.class);
 		AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 
-		
+		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+		SharedPreferences.Editor mEditor = mPrefs.edit();
+
+
 		if (reminderType.equals("pill")){
-		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	    	alarmManager.cancel(pendingIntent);
-	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 4, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 4, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	    	alarmManager.cancel(pendingIntentSnooze);
+			mEditor.putBoolean("isSnooze1", false);
+			mEditor.putBoolean("canCheckAlarm1", false);
+			mEditor.putLong("snoozeStartTime1", System.currentTimeMillis());
+
 
 		} else if (reminderType.equals("period")){
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 2, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	    	alarmManager.cancel(pendingIntent);
-	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 5, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 5, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	    	alarmManager.cancel(pendingIntentSnooze);
+	    	mEditor.putBoolean("isSnooze2", false);
+			mEditor.putBoolean("canCheckAlarm2", false);
+			mEditor.putLong("snoozeStartTime2", System.currentTimeMillis());
+			mEditor.putInt("periodRepeatingDays", 0);
 
 		} else if (reminderType.equals("ovulation")){
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 3, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 3, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	    	alarmManager.cancel(pendingIntent);
-	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 6, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+	    	PendingIntent pendingIntentSnooze = PendingIntent.getBroadcast(context, 6, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	    	alarmManager.cancel(pendingIntentSnooze);
+	    	mEditor.putBoolean("isSnooze3", false);
+			mEditor.putBoolean("canCheckAlarm3", false);
+			mEditor.putLong("snoozeStartTime3", System.currentTimeMillis());
+			mEditor.putInt("ovulationRepeatingDays", 0);
 
 		} else {
 		    isSuccess = "Error";
 		}
+
+		mEditor.commit();
 
 
 		HashMap<String, Object> params = new HashMap<>();
@@ -807,6 +885,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		Hashtable<String, String> eventData = new Hashtable<String, String>();
 		eventData.put("eventName", "cancelReminder");
 		eventData.put("eventIdentifier", "");
+		eventData.put("reminderType", reminderType);
 		params.put("event", eventData);
 		dispatch(params, "cancelReminder", fListener);
 
@@ -935,7 +1014,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
 		SharedPreferences.Editor mEditor = mPrefs.edit();
-		mEditor.putBoolean("usingCustomReminders", usingCustomReminders).commit();
+		mEditor.putBoolean("usingCustomReminders", usingCustomReminders);
+		mEditor.commit();
 
 		if (appSecret.equals("") || appUid.equals("")){
 			Log.e("Corona", "neura.connect() takes table as first argument with appUid and appSecret as required keys.");
