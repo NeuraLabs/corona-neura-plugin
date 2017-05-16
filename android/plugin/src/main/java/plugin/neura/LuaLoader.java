@@ -245,6 +245,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				String bodyText = "";
 				String username = "you";
 				String button1Text = "Took Pill";
+
+				SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("neuraplugin", 0);
+				String username = mPrefs.getString("username");
+
 				//make first letter of notification type upper case
 				String notificationTitle = notificationType.substring(0,1).toUpperCase() + notificationType.substring(1).toLowerCase();
 				int numDays = 1; //need to have this provided by lua code
@@ -543,6 +547,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		boolean repeatDaily = false;
 		String reminderType = "";
 		int repeatingDays = 0;
+		String username = "you";
 
 
         // If an options table has been passed
@@ -557,6 +562,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             else
             {
                 System.out.println( "Error: reminderType expected, got " + L.typeName( -1 ) );
+            }
+            L.pop( 1 );
+
+            // Get the app key
+            L.getField( -1, "username" );
+            if ( L.isString( -1 ) )
+            {
+                username = L.checkString( -1 );
             }
             L.pop( 1 );
 
@@ -654,6 +667,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 			CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 			Context context = activity.getApplicationContext();
+
+			SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+			SharedPreferences.Editor mEditor = mPrefs.edit();
+			mEditor.putString("username", username).commit();
 
 			Intent alarmIntent = new Intent(context, NeuraAlarm.class);
 			alarmIntent.putExtra("notificationCode",alarm_broadcast_ID);
