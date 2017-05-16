@@ -546,11 +546,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int setReminder(LuaState L) {
 
-		int hour = 9;
+		int hour = 8;
 		int minute = 0;
 		int second = 0;
-		int month = Calendar.getInstance().get(Calendar.MONTH);
 		int day = Calendar.getInstance().get(Calendar.DATE);
+		int month = Calendar.getInstance().get(Calendar.MONTH);
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		boolean repeatDaily = false;
 		String reminderType = "";
@@ -668,9 +668,22 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		{
 	    	Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.set(Calendar.DATE, day);
+			calendar.set(Calendar.MONTH, month);
+			calendar.set(Calendar.YEAR, year);
 			calendar.set(Calendar.HOUR_OF_DAY, hour);
 			calendar.set(Calendar.MINUTE, minute);
 			calendar.set(Calendar.SECOND, second);
+
+			//if today's alarm time has already passed, set it for tomorrow instead
+			//not needed for period and ovulation reminder, since they are initially triggered by neura events rather than a fixed time
+			Calendar now = Calendar.getInstance();
+			now.setTimeInMillis(System.currentTimeMillis());
+			if (calendar.getTimeInMillis() < now.getTimeInMillis() && reminderType.equals("pill")){
+				Log.d("Corona", "Already passed alarm time, set for tomorrow instead");
+				calendar.add(Calendar.DATE, 1);
+			}
+			
 
 
 			CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
