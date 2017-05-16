@@ -515,8 +515,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					{
 						calendar.add(Calendar.MINUTE, 60);	
 					}
-					//
-			    	alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+
+					
+
+					//only set the next snooze alarm if it will happen on the same day, i.e. will not be later than 23:59 on the day the snooze is set
+					Calendar now = Calendar.getInstance();
+			    	now.setTimeInMillis(System.currentTimeMillis());
+					if (calendar.get(Calendar.YEAR) == now.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)) {
+			    		alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+			    	}
 			    }
             }
     	}
