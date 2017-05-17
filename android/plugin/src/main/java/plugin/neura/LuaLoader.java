@@ -154,6 +154,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				new UnregisterNotificationForEventWrapper(),
 				new SetReminderWrapper(),
 				new CancelReminderWrapper(),
+				new SnoozeReminderWrapper(),
 
 
 		};
@@ -913,6 +914,139 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		@Override
 		public int invoke(LuaState L) {
 			return cancelReminder(L);
+		}
+	}
+
+
+	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int snoozeReminder(LuaState L) {
+
+		String reminderType = "";
+
+
+        // If an options table has been passed
+        if ( L.isTable( -1 ) )
+        {
+            // Get the app key
+            L.getField( -1, "reminderType" );
+            if ( L.isString( -1 ) )
+            {
+                reminderType = L.checkString( -1 );
+            }
+            else
+            {
+                System.out.println( "Error: reminderType expected, got " + L.typeName( -1 ) );
+            }
+            L.pop( 1 );
+        }
+
+		if (reminderType.equals("")){
+			Log.e("Corona", "neura.snoozeReminder() takes table as first argument with reminderType as required key.");
+			return 0;
+		}
+
+		String isSuccess = "Success";
+		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		Context context = activity.getApplicationContext();
+
+		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+		SharedPreferences.Editor mEditor = mPrefs.edit();
+
+    	final int alarm_broadcast_ID;
+		if (reminderType.equals("pill")){
+			NotificationManagerCompat.from(context).cancel(1);//actual alarm notification
+    		NotificationManagerCompat.from(context).cancel(4);//snooze notification
+    		//NeuraEventsService.snoozeArray[0] = true;
+    		//NeuraEventsService.snoozeStartTime[0] = System.currentTimeMillis();
+			mEditor.putBoolean("isSnooze1", true);
+			mEditor.putLong("snoozeStartTime1", System.currentTimeMillis());
+
+		    alarm_broadcast_ID = 4;
+		} else if (reminderType.equals("period")){
+			NotificationManagerCompat.from(context).cancel(2);//actual alarm notification
+    		NotificationManagerCompat.from(context).cancel(5);//snooze notification
+    		//NeuraEventsService.snoozeArray[1] = true;
+    		//NeuraEventsService.snoozeStartTime[1] = System.currentTimeMillis();
+			mEditor.putBoolean("isSnooze2", true);
+			mEditor.putLong("snoozeStartTime2", System.currentTimeMillis());
+
+			alarm_broadcast_ID = 5;
+		} else if (reminderType.equals("ovulation")){
+			alarm_broadcast_ID = 6;
+			NotificationManagerCompat.from(context).cancel(3);//actual alarm notification
+    		NotificationManagerCompat.from(context).cancel(6);//snooze notification
+    		//NeuraEventsService.snoozeArray[2] = true;
+    		//NeuraEventsService.snoozeStartTime[2] = System.currentTimeMillis();
+			mEditor.putBoolean("isSnooze3", true);
+			mEditor.putLong("snoozeStartTime3", System.currentTimeMillis());
+		} else {
+		    alarm_broadcast_ID = 0;
+		}
+		//cal.set(Calendar.SECOND, 0);
+    	//cal.set(Calendar.MILLISECOND, 0);
+
+		if (alarm_broadcast_ID > 0)
+		{
+
+			Intent alarmIntent = new Intent(context, NeuraAlarm.class);
+			alarmIntent.putExtra("notificationCode",alarm_broadcast_ID);
+			alarmIntent.putExtra("notificationType",reminderType);
+			alarmIntent.putExtra("snoozeStartTime", System.currentTimeMillis());
+			//alarmIntent.putExtra("isSnooze","yes");
+		    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm_broadcast_ID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+
+	    	Calendar calendar = Calendar.getInstance();
+	    	calendar.setTimeInMillis(System.currentTimeMillis());
+
+			// add 25/60 mins to the calendar object
+			if (alarm_broadcast_ID < 5)
+			{
+				calendar.add(Calendar.MINUTE, 25);	
+			}
+			else
+			{
+				calendar.add(Calendar.MINUTE, 60);	
+			}
+
+
+			
+
+			//only set the next snooze alarm if it will happen on the same day, i.e. will not be later than 23:59 on the day the snooze is set
+			Calendar now = Calendar.getInstance();
+	    	now.setTimeInMillis(System.currentTimeMillis());
+			if (calendar.get(Calendar.YEAR) == now.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)) {
+	    		alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+	    	}
+	    }
+
+	    mEditor.commit();
+
+
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("type", isSuccess);
+		Hashtable<String, String> eventData = new Hashtable<String, String>();
+		eventData.put("eventName", "snoozeReminder");
+		eventData.put("eventIdentifier", "");
+		eventData.put("reminderType", reminderType);
+		params.put("event", eventData);
+		dispatch(params, "snoozeReminder", fListener);
+
+		return 0;
+	}
+
+
+	@SuppressWarnings("unused")
+	private class SnoozeReminderWrapper implements NamedJavaFunction {
+
+		@Override
+		public String getName() {
+			return "snoozeReminder";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return snoozeReminder(L);
 		}
 	}
 
