@@ -1150,7 +1150,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		Hashtable<Object, Object> args = CoronaLua.toHashtable(L, 1);
 		String appUid = args.get("appUid").toString();
 		String appSecret = args.get("appSecret").toString();
-		boolean usingCustomReminders = (boolean) args.get("usingCustomReminders");
+
+		boolean usingCustomReminders = false;
+		if (L.isTable(2)){
+			Hashtable<Object, Object> hiddenArgs = CoronaLua.toHashtable(L, 2);
+			usingCustomReminders = (boolean) hiddenArgs.get("usingCustomReminders");
+		}
+
 
 		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 		Context context = activity.getApplicationContext();
