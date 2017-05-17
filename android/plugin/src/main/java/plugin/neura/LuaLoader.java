@@ -328,6 +328,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	    		notif.flags |= Notification.FLAG_AUTO_CANCEL;
 				notificationManager.notify(notificationCode, notif);
 
+
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("type", "Success");
+				Hashtable<String, String> eventData = new Hashtable<String, String>();
+				eventData.put("eventName", "notificationTriggered");
+				eventData.put("eventIdentifier", notificationType);
+				params.put("event", eventData);
+				dispatch(params, "setReminder", fListener);
+
 				/*Intent alarmIntent = new Intent(this, NeuraAlarm.class);
 				long scTime = 60*1000;//mins
 				PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
