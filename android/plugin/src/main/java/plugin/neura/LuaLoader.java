@@ -155,6 +155,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				new SetReminderWrapper(),
 				new CancelReminderWrapper(),
 				new SnoozeReminderWrapper(),
+				new ClearNotificationWrapper(),
 
 
 		};
@@ -1047,6 +1048,82 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		@Override
 		public int invoke(LuaState L) {
 			return snoozeReminder(L);
+		}
+	}
+
+
+	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int clearNotification(LuaState L) {
+
+		String reminderType = "";
+
+
+        // If an options table has been passed
+        if ( L.isTable( -1 ) )
+        {
+            // Get the app key
+            L.getField( -1, "reminderType" );
+            if ( L.isString( -1 ) )
+            {
+                reminderType = L.checkString( -1 );
+            }
+            else
+            {
+                System.out.println( "Error: reminderType expected, got " + L.typeName( -1 ) );
+            }
+            L.pop( 1 );
+        }
+
+		if (reminderType.equals("")){
+			Log.e("Corona", "neura.clearNotification() takes table as first argument with reminderType as required key.");
+			return 0;
+		}
+
+		String isSuccess = "Success";
+		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		Context context = activity.getApplicationContext();
+
+		SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
+		SharedPreferences.Editor mEditor = mPrefs.edit();
+
+		if (reminderType.equals("pill")){
+			NotificationManagerCompat.from(context).cancel(1);//actual alarm notification
+    		NotificationManagerCompat.from(context).cancel(4);//snooze notification
+    		
+		} else if (reminderType.equals("period")){
+			NotificationManagerCompat.from(context).cancel(2);//actual alarm notification
+    		NotificationManagerCompat.from(context).cancel(5);//snooze notification
+    		
+		} else if (reminderType.equals("ovulation")){
+			NotificationManagerCompat.from(context).cancel(3);//actual alarm notification
+    		NotificationManagerCompat.from(context).cancel(6);//snooze notification
+    		
+		}
+
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("type", isSuccess);
+		Hashtable<String, String> eventData = new Hashtable<String, String>();
+		eventData.put("eventName", "clearNotification");
+		eventData.put("eventIdentifier", "");
+		eventData.put("reminderType", reminderType);
+		params.put("event", eventData);
+		dispatch(params, "clearNotification", fListener);
+
+		return 0;
+	}
+
+
+	@SuppressWarnings("unused")
+	private class ClearNotificationWrapper implements NamedJavaFunction {
+
+		@Override
+		public String getName() {
+			return "clearNotification";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return clearNotification(L);
 		}
 	}
 
