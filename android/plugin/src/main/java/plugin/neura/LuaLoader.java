@@ -334,9 +334,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				params.put("type", "Success");
 				Hashtable<String, String> eventData = new Hashtable<String, String>();
 				eventData.put("eventName", "notificationTriggered");
-				eventData.put("eventIdentifier", notificationType);
+				eventData.put("notificationType", notificationType);
 				params.put("event", eventData);
-				dispatch(params, "setReminder", fListener);
+				dispatch(params, "notificationTriggered", fListener);
 
 				/*Intent alarmIntent = new Intent(this, NeuraAlarm.class);
 				long scTime = 60*1000;//mins
