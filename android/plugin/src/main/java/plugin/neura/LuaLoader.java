@@ -307,6 +307,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					//NeuraEventsService.snoozeStartTime[2] = 0;
 				}
 
+
+				Intent deleteIntent = new Intent(context, NotificationDeleteService.class);
+
+				Bundle deleteIntentBundle = new Bundle();            
+				deleteIntentBundle.putInt("clickIndex", 2);
+				deleteIntentBundle.putInt("notificationCode", notificationCode);
+				deleteIntentBundle.putString("notificationType", notificationType);
+				deleteIntent.putExtras(deleteIntentBundle);
+
+				PendingIntent deletePendingIntent = PendingIntent.getService(context, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 				
 				//Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 				//.setSound(alarmSound) 
@@ -319,6 +330,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				                .setTicker(bodyText)
 				                .setDefaults(Notification.DEFAULT_SOUND)
 				                .setAutoCancel(true)
+				                .setDeleteIntent(deletePendingIntent)
 				                .addAction(new NotificationCompat.Action(resourceServices.getDrawableResourceId("neura_sdk_symbol"), button1Text, action1PendingIntent))
 				               	.addAction(new NotificationCompat.Action(resourceServices.getDrawableResourceId("corona_statusbar_icon_default"), "Snooze", action2PendingIntent))
 				               	.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
@@ -449,6 +461,29 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
        	}
     }
 
+    public static class NotificationDeleteService extends IntentService {
+        public NotificationDeleteService() {
+            super(NotificationDeleteService.class.getSimpleName());
+        }
+
+        @Override
+        protected void onHandleIntent(Intent notificationIntent) {
+
+            String action = notificationIntent.getAction();
+            int notificationCode= notificationIntent.getIntExtra("notificationCode", 1);
+       		String notificationType = notificationIntent.getStringExtra("notificationType");
+
+       		HashMap<String, Object> params = new HashMap<>();
+			params.put("type", "Success");
+			Hashtable<String, String> eventData = new Hashtable<String, String>();
+			eventData.put("eventName", "recordNotificationInteraction");
+			eventData.put("notificationType", notificationType);
+			eventData.put("interactionType", "dismissed");
+			params.put("event", eventData);
+			dispatch(params, "recordNotificationInteraction", fListener);
+ 
+    	}
+	}
 
 
     public static class NotificationActionService extends IntentService {
@@ -469,6 +504,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             	NotificationManagerCompat.from(this).cancel(1);//actual alarm notification
             	NotificationManagerCompat.from(this).cancel(4);//snooze notification
        			if (notificationType.equals("pill")){
+
+       				HashMap<String, Object> params = new HashMap<>();
+					params.put("type", "Success");
+					Hashtable<String, String> eventData = new Hashtable<String, String>();
+					eventData.put("eventName", "recordNotificationInteraction");
+					eventData.put("notificationType", notificationType);
+					eventData.put("interactionType", "clickedOK");
+					params.put("event", eventData);
+					dispatch(params, "recordNotificationInteraction", fListener);
+
 	                Intent coronaIntent = new Intent(this, com.ansca.corona.CoronaActivity.class);
 					coronaIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -485,9 +530,29 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					Log.d("Corona", "Dismissed Notification");
 				}
             } else if (action.equals(ACTION_1+"period")){
+
+            	HashMap<String, Object> params = new HashMap<>();
+				params.put("type", "Success");
+				Hashtable<String, String> eventData = new Hashtable<String, String>();
+				eventData.put("eventName", "recordNotificationInteraction");
+				eventData.put("notificationType", notificationType);
+				eventData.put("interactionType", "clickedOK");
+				params.put("event", eventData);
+				dispatch(params, "recordNotificationInteraction", fListener);
+
             	NotificationManagerCompat.from(this).cancel(2);//actual alarm notification
             	NotificationManagerCompat.from(this).cancel(5);//snooze notification
             } else if (action.equals(ACTION_1+"ovulation")){
+
+            	HashMap<String, Object> params = new HashMap<>();
+				params.put("type", "Success");
+				Hashtable<String, String> eventData = new Hashtable<String, String>();
+				eventData.put("eventName", "recordNotificationInteraction");
+				eventData.put("notificationType", notificationType);
+				eventData.put("interactionType", "clickedOK");
+				params.put("event", eventData);
+				dispatch(params, "recordNotificationInteraction", fListener);
+
             	NotificationManagerCompat.from(this).cancel(3);//actual alarm notification
             	NotificationManagerCompat.from(this).cancel(6);//snooze notification
 
@@ -498,6 +563,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 				SharedPreferences mPrefs = context.getSharedPreferences("neuraplugin", 0);
 				SharedPreferences.Editor mEditor = mPrefs.edit();
+
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("type", "Success");
+				Hashtable<String, String> eventData = new Hashtable<String, String>();
+				eventData.put("eventName", "recordNotificationInteraction");
+				eventData.put("notificationType", newNotificationType);
+				eventData.put("interactionType", "snooze");
+				params.put("event", eventData);
+				dispatch(params, "recordNotificationInteraction", fListener);
+
 
             	final int alarm_broadcast_ID;
 				if (newNotificationType.equals("pill")){
