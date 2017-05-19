@@ -91,9 +91,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
+	public static final String PLUGIN_VERSION = "1.0.0";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
+
+
 
     //Neura alarm types
     /*	1-3 = actual alarms
@@ -156,6 +159,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				new CancelReminderWrapper(),
 				new SnoozeReminderWrapper(),
 				new ClearNotificationWrapper(),
+				new GetPluginVersionWrapper(),
 
 
 		};
@@ -1763,6 +1767,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	}
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int getPluginVersion(LuaState L) {
+		L.pushString(PLUGIN_VERSION);
+		return 1;
+	}
+
+	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int getSleepProfile(final LuaState L) {
 		if (!L.isNumber(1) || !L.isNumber(2)){
 			Log.e("Corona", "neura.getSleepProfile() takes numbers as the first two arguments.");
@@ -2383,6 +2393,20 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		@Override
 		public int invoke(LuaState L) {
 			return getSdkVersion(L);
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private class GetPluginVersionWrapper implements NamedJavaFunction {
+
+		@Override
+		public String getName() {
+			return "getPluginVersion";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return getPluginVersion(L);
 		}
 	}
 
