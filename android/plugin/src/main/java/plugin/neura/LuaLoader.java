@@ -326,6 +326,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				        new NotificationCompat.Builder(context)
 				                .setSmallIcon(resourceServices.getDrawableResourceId("corona_statusbar_icon_default"))
 				                .setContentTitle(notificationTitle + " reminder")
+				                .setPriority(Notification.PRIORITY_MAX)
 				                .setContentText(bodyText)
 				                .setTicker(bodyText)
 				                .setDefaults(Notification.DEFAULT_SOUND)
