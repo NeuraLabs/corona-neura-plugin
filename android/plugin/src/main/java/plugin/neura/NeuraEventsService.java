@@ -139,8 +139,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			    	long diff = now - snoozeStartTime1;
 			    	if (diff >= alarmWaitTimes[0])
 			    	{
-			    		isSnooze1 = false;
-			    		snoozeStartTime1 = 0;
+			    		
 
 						Intent alarmIntent = new Intent(context, LuaLoader.NeuraAlarm.class);
 					    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 4, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
@@ -151,7 +150,11 @@ public class NeuraEventsService extends FirebaseMessagingService {
 				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
 			        	alarmIntNew.putExtra("notificationCode",4);
 						alarmIntNew.putExtra("notificationType","pill");
+						alarmIntNew.putExtra("isSnooze",1);
 			        	context.startService(alarmIntNew);
+
+			        	isSnooze1 = false;
+			    		snoozeStartTime1 = 0;
 			        }
 			        else
 			        {
@@ -173,14 +176,23 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			    	long diff = now - snoozeStartTime2;
 			    	if (diff >= alarmWaitTimes[1] || canCheckAlarm2 == true)
 			    	{
-			    		canCheckAlarm2 = false;
-				    	isSnooze2 = false;
-				    	snoozeStartTime2 = 0;
+			    		
 
 				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
 			        	alarmIntNew.putExtra("notificationCode",5);
 						alarmIntNew.putExtra("notificationType","period");
+						if (isSnooze2 == true){
+							alarmIntNew.putExtra("isSnooze",1);
+						}
+						else
+						{
+							alarmIntNew.putExtra("isSnooze",0);
+						}
 			        	context.startService(alarmIntNew);
+
+			        	canCheckAlarm2 = false;
+				    	isSnooze2 = false;
+				    	snoozeStartTime2 = 0;
 			        }
 			        else
 			        {
@@ -203,14 +215,23 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			    	long diff = now - snoozeStartTime3;
 			    	if (diff >= alarmWaitTimes[2] || canCheckAlarm3 == true)
 			    	{
-			    		canCheckAlarm3 = false;
-				    	isSnooze3 = false;
-				    	snoozeStartTime3 = 0;
+			    		
 
 				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
 			        	alarmIntNew.putExtra("notificationCode",6);
 						alarmIntNew.putExtra("notificationType","ovulation");
+						if (isSnooze3 == true){
+							alarmIntNew.putExtra("isSnooze",1);
+						}
+						else
+						{
+							alarmIntNew.putExtra("isSnooze",0);
+						}
 			        	context.startService(alarmIntNew);
+
+			        	canCheckAlarm3 = false;
+				    	isSnooze3 = false;
+				    	snoozeStartTime3 = 0;
 			        }
 			        else
 			        {
