@@ -248,7 +248,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	       			}
        				canShow = true;
        			}
-       			else if (lastShown.get(Calendar.YEAR) != now.get(Calendar.YEAR) || lastShown.get(Calendar.DAY_OF_YEAR) != now.get(Calendar.DAY_OF_YEAR)) {
+       			else if (lastShownCalendar.get(Calendar.YEAR) != now.get(Calendar.YEAR) || lastShownCalendar.get(Calendar.DAY_OF_YEAR) != now.get(Calendar.DAY_OF_YEAR)) {
        				canShow = true;	
        				if (isDebug == true){
 	       				Log.d("Corona", notificationType + " reminder type has not been shown today, so can show now");
