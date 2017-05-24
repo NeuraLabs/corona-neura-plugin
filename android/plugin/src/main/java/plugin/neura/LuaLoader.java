@@ -261,11 +261,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 				if (notificationType.equals("period")){
 					numDays = mPrefs.getInt("periodRepeatingDays", 0);
-					Log.d("Corona", "periodRepeatingDays = "+numDays);
 					
 				} else if (notificationType.equals("ovulation")){
 					numDays = mPrefs.getInt("ovulationRepeatingDays", 0);
-					Log.d("Corona", "ovulationRepeatingDays = "+numDays);
 				}
 
 
@@ -409,11 +407,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 
 			if (notificationType.equals("period")){
-				Log.d("Corona", "periodRepeatingDays (a) set to "+repeatingDays);
 				mEditor.putInt("periodRepeatingDays", repeatingDays);
 
 			} else if (notificationType.equals("ovulation")){
-				Log.d("Corona", "ovulationRepeatingDays (a) set to "+repeatingDays);
 				mEditor.putInt("ovulationRepeatingDays", repeatingDays);
 			}
 	
@@ -844,10 +840,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 			if (reminderType.equals("period")){
 				mEditor.putInt("periodRepeatingDays", repeatingDays);
-				Log.d("Corona", "periodRepeatingDays (b) set to "+repeatingDays);
 			} else if (reminderType.equals("ovulation")){
 				mEditor.putInt("ovulationRepeatingDays", repeatingDays);
-				Log.d("Corona", "periodRepeatingDays (b) set to "+repeatingDays);
 			}
 
 			Intent alarmIntent = new Intent(context, NeuraAlarm.class);
@@ -960,7 +954,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			mEditor.putBoolean("canCheckAlarm2", false);
 			mEditor.putLong("snoozeStartTime2", System.currentTimeMillis());
 			mEditor.putInt("periodRepeatingDays", 0);
-			Log.d("Corona", "periodRepeatingDays cancelled");
 
 		} else if (reminderType.equals("ovulation")){
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 3, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -971,7 +964,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			mEditor.putBoolean("canCheckAlarm3", false);
 			mEditor.putLong("snoozeStartTime3", System.currentTimeMillis());
 			mEditor.putInt("ovulationRepeatingDays", 0);
-			Log.d("Corona", "ovulationRepeatingDays cancelled");
 
 		} else {
 		    isSuccess = "Error";

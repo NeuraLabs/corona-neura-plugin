@@ -51,7 +51,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 
 	@Override
 	public void onMessageReceived(RemoteMessage message) {
-		Log.i("Corona", "onMessageReceived");
+		//Log.i("Corona", "onMessageReceived");
 		Map data = message.getData();
 
 		String messageID = message.getMessageId();
@@ -160,7 +160,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 						int minutes = (int) ((remainingTime / (1000*60)) % 60);
 						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
 
-						Log.d("Corona", "Too early to trigger alarm 1. Wait another "+minutes+":"+seconds);
+						//Log.d("Corona", "Too early to trigger alarm 1. Wait another "+minutes+":"+seconds);
 
 			        }
 			    }
@@ -189,7 +189,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 						int minutes = (int) ((remainingTime / (1000*60)) % 60);
 						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
 
-						Log.d("Corona", "Too early to trigger alarm 2. Wait another "+minutes+":"+seconds);
+						//Log.d("Corona", "Too early to trigger alarm 2. Wait another "+minutes+":"+seconds);
 
 			        
 			        }
@@ -219,7 +219,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 						int minutes = (int) ((remainingTime / (1000*60)) % 60);
 						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
 
-						Log.d("Corona", "Too early to trigger alarm 3. Wait another "+minutes+":"+seconds);
+						//Log.d("Corona", "Too early to trigger alarm 3. Wait another "+minutes+":"+seconds);
 
 			        
 			        }
