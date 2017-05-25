@@ -169,14 +169,17 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			    }
 			}
 		}
+
 		if (isSnooze2 == true || canCheckAlarm2 == true){
-			String[] alarm2Triggers = { "userWokeUp","userGotUp","userArrivedHome","userArrivedToWork", "userFinishedWalking", "userFinishedRunning", "userFinishedDriving", "userArrivedAtPharmacy" };   
+			Log.d("Corona", "Can check alarm 2");
+			String[] alarm2Triggers = { "userWokeUp","userGotUp","userArrivedHome","userArrivedToWork", "userFinishedWalking", "userFinishedRunning", "userFinishedDriving", "userArrivedAtPharmacy", "userArrivedAtGroceryStore" };   
 			for(int i=0; i<alarm2Triggers.length; i++){         
 			    if (alarm2Triggers[i].equals(eventName)){
+			    	Log.d("Corona", "Valid trigger");
 			    	long diff = now - snoozeStartTime2;
 			    	if (diff >= alarmWaitTimes[1] || canCheckAlarm2 == true)
 			    	{
-			    		
+			    		Log.d("Corona", "Can show notification");
 
 				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
 			        	alarmIntNew.putExtra("notificationCode",5);
@@ -200,7 +203,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			        	int seconds = (int) (remainingTime / 1000) % 60 ;
 						int minutes = (int) ((remainingTime / (1000*60)) % 60);
 						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
-
+						Log.d("Corona", "Cannot show notification yet");
 						//Log.d("Corona", "Too early to trigger alarm 2. Wait another "+minutes+":"+seconds);
 
 			        
@@ -209,13 +212,15 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			}
 		}
 		if (isSnooze3 == true || canCheckAlarm3 == true){
-			String[] alarm3Triggers = { "userWokeUp","userGotUp","userArrivedHome","userArrivedToWork", "userFinishedWalking", "userFinishedRunning", "userFinishedDriving", "userArrivedAtPharmacy" };   
+			Log.d("Corona", "Can check alarm 3");
+			String[] alarm3Triggers = { "userWokeUp","userGotUp","userArrivedHome","userArrivedToWork", "userFinishedWalking", "userFinishedRunning", "userFinishedDriving", "userArrivedAtPharmacy", "userArrivedAtGroceryStore" };   
 			for(int i=0; i<alarm3Triggers.length; i++){         
 			    if (alarm3Triggers[i].equals(eventName)){
+			    	Log.d("Corona", "Valid trigger");
 			    	long diff = now - snoozeStartTime3;
 			    	if (diff >= alarmWaitTimes[2] || canCheckAlarm3 == true)
 			    	{
-			    		
+			    		Log.d("Corona", "Can show notification");
 
 				    	Intent alarmIntNew = new Intent(context, LuaLoader.NeuraAlarmService.class);
 			        	alarmIntNew.putExtra("notificationCode",6);
@@ -239,7 +244,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			        	int seconds = (int) (remainingTime / 1000) % 60 ;
 						int minutes = (int) ((remainingTime / (1000*60)) % 60);
 						int hours   = (int) ((remainingTime / (1000*60*60)) % 24);
-
+						Log.d("Corona", "Cannot show notification yet");
 						//Log.d("Corona", "Too early to trigger alarm 3. Wait another "+minutes+":"+seconds);
 
 			        

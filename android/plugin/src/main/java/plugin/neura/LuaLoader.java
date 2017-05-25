@@ -91,7 +91,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.4";
+	public static final String PLUGIN_VERSION = "1.0.5";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
@@ -372,10 +372,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					//Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 					//.setSound(alarmSound) 
 
+					Intent coronaIntent = new Intent(this, com.ansca.corona.CoronaActivity.class);
+					coronaIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					PendingIntent coronaPendingIntent = PendingIntent.getActivity(context, 0, coronaIntent, 0);
+
+
 					NotificationCompat.Builder notificationBuilder =
 					        new NotificationCompat.Builder(context)
 					                .setSmallIcon(resourceServices.getDrawableResourceId("corona_statusbar_icon_default"))
 					                .setContentTitle(notificationTitle + " reminder")
+					                .setContentIntent(coronaPendingIntent)
 					                .setPriority(Notification.PRIORITY_MAX)
 					                .setContentText(bodyText)
 					                .setTicker(bodyText)
