@@ -91,7 +91,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.5";
+	public static final String PLUGIN_VERSION = "1.0.6";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
@@ -263,7 +263,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
        			}
 
        			if (canShow == true){
-
+       				Log.d("Corona", "Can show notification");
 					NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
 					ResourceServices resourceServices = new ResourceServices(context);
