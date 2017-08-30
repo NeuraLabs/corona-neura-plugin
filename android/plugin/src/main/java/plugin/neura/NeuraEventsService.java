@@ -24,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.neura.standalonesdk.events.NeuraEvent;
 import com.neura.standalonesdk.events.NeuraPushCommandFactory;
+import com.neura.standalonesdk.events.NeuraEventCallBack;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -56,7 +57,14 @@ public class NeuraEventsService extends FirebaseMessagingService {
 
 		String messageID = message.getMessageId();
 
-		if (NeuraPushCommandFactory.getInstance().isNeuraEvent(data)) {
+		NeuraEventCallBack neuraEventCallBack = new NeuraEventCallBack() {
+			@Override
+			public void neuraEventDetected(NeuraEvent event) {
+				//// FIXME: 30.08.2017
+			}
+		};
+
+		if (NeuraPushCommandFactory.getInstance().isNeuraPush(getApplicationContext(), data, neuraEventCallBack)) {
 			NeuraEvent event = NeuraPushCommandFactory.getInstance().getEvent(data);
 			String eventText = event != null ? event.toString() : "couldn't parse data";
 
@@ -331,5 +339,10 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.notify((int) System.currentTimeMillis(), notification);
 		}
+	}
+
+	@Override
+	protected Intent zzF(Intent intent) {
+		return null;
 	}
 }
