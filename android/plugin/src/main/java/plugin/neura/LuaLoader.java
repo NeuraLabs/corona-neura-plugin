@@ -1,6 +1,10 @@
 package plugin.neura;
 
+import com.neura.resources.authentication.AnonymousAuthenticateCallBack;
+import com.neura.resources.authentication.AnonymousAuthenticateData;
+import com.neura.sdk.object.AnonymousAuthenticationRequest;
 //import com.ansca.corona.CoronaActivity;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -91,7 +95,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.6";
+	public static final String PLUGIN_VERSION = "1.0.10";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
@@ -478,9 +482,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 
-			    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+				}
 
-        	} else if (repeatingDays > 0){
+			} else if (repeatingDays > 0){
         		//when repeatingDays > 0 set a reminder for the next day and decrease repeatingDays by 1
 
         		repeatingDays = repeatingDays - 1;
@@ -503,17 +509,19 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationCode, repeatAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			    AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 
-			    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        	}
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+				}
+			}
 
 
 
 			mEditor.commit();
 
         	Intent i = new Intent(context, NeuraAlarmService.class);
-        	i.putExtra("notificationCode",notificationCode);
-			i.putExtra("notificationType",notificationType);
-			i.putExtra("repeatingDays",repeatingDays);
+        	i.putExtra("notificationCode", notificationCode);
+			i.putExtra("notificationType", notificationType);
+			i.putExtra("repeatingDays", repeatingDays);
         	context.startService(i);
        	}
     }
@@ -908,8 +916,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		    {
 		    	//set once, will be set again when it goes off. only way to have the alarm go off at a fixed time, 
 		    	//otherwise android will trigger the alarm any time between the target time and the interval period until next alarm.
-		    	alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-		    }
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+				}
+			}
 		    else
 		    {
 		    	alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
@@ -1326,7 +1336,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("type", "Failure");
 		params.put("isError", true);
-		params.put("response", ""+errorCode);
+		params.put("response", "" + errorCode);
 		params.put("data", SDKUtils.errorCodeToString(errorCode));
 
 		dispatch(params, eventName, listener);
@@ -1428,7 +1438,58 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		return 0;
 	}
 
+	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int authenticate(final LuaState L) {
+		int listener = fListener;
+		if ( CoronaLua.isListener( L, -1, "" ) ) {
+			listener = CoronaLua.newRef(L, -1);
+		}
+		final int finalListener = listener;
+		final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 
+		//Get the FireBase Instance ID, we will use it to instantiate AnonymousAuthenticationRequest
+		String pushToken = FirebaseInstanceId.getInstance().getToken();
+
+		//Instantiate AnonymousAuthenticationRequest instance.
+		AnonymousAuthenticationRequest request = new AnonymousAuthenticationRequest(pushToken);
+		boolean result = mNeuraApiClient.authenticate(request, new AnonymousAuthenticateCallBack() {
+			@Override
+			public  void onSuccess(AnonymousAuthenticateData authenticateData) {
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("type", "Success");
+				Hashtable<String, Object> data = new Hashtable<>();
+				data.put("neuraUserId", authenticateData.getNeuraUserId());
+				//data.put("accessToken", authenticateData.getAccessToken());
+				/*ArrayList<EventDefinition> events = authenticateData.getEvents();
+				Hashtable<Integer, Object> eventsJson = new Hashtable<Integer, Object>();
+				for (EventDefinition event : events){
+					Hashtable<Object, Object> ht = jsonToHashTable(L, event.toJson().toString());
+					eventsJson.put(eventsJson.size()+1, ht);
+				}
+				data.put("events", eventsJson);
+				*/
+				params.put("data", data);
+
+				dispatch(params, "authenticate", finalListener);
+
+			}
+
+			@Override
+			public void onFailure(int errorCode) {
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("type", "Failure");
+				params.put("isError", true);
+				params.put("response", "" + errorCode);
+				params.put("data", SDKUtils.errorCodeToString(errorCode));
+
+				dispatch(params, "authenticate", finalListener);
+
+			}
+		});
+		L.pushBoolean(result);
+		return 1;
+	}
+/*
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int authenticate(final LuaState L) {
 		int listener = fListener;
@@ -1492,7 +1553,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		L.pushBoolean(result);
 		return 1;
 	}
-
+*/
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int subscribeToEvent(LuaState L) {
 		if (!L.isString(1) || !L.isString(2)){
