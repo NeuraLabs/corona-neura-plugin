@@ -95,7 +95,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.6";
+	public static final String PLUGIN_VERSION = "1.0.10";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
@@ -1446,30 +1446,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 		final int finalListener = listener;
 		final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
-
-
-		//AuthenticationRequest request = new AuthenticationRequest();
-		/*
-		if (L.isTable(1)) {
-			Hashtable<Object, Object> args = CoronaLua.toHashtable(L, 1);
-			if (args.containsKey("phone")) {
-				request.setPhone(args.get("phone").toString());
-			}
-			if (args.containsKey("appId")) {
-				request.setAppId(args.get("appId").toString());
-			}
-			if (args.containsKey("appSecret")) {
-				request.setAppSecret(args.get("appSecret").toString());
-			}
-		}
-		*/
-
-//		String str1 = activity.getApplicationContext().getString(activity.getApplicationContext().getApplicationInfo().labelRes);
-//		Log.d("Corona", "App name 1: " +str1);
-//		String str2 = activity.getString(activity.getApplicationContext().getApplicationInfo().labelRes);
-//		Log.d("Corona", "App name 2: " +str2);
-//		String str3 = activity.getString(activity.getApplicationInfo().labelRes);
-//		Log.d("Corona", "App name 3: " +str3);
 
 		//Get the FireBase Instance ID, we will use it to instantiate AnonymousAuthenticationRequest
 		String pushToken = FirebaseInstanceId.getInstance().getToken();

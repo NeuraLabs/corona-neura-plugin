@@ -38,6 +38,8 @@ import java.util.Map;
 
 import com.ansca.corona.CoronaActivity;
 import com.ansca.corona.CoronaEnvironment;
+import com.neura.standalonesdk.service.NeuraApiClient;
+
 import android.app.AlarmManager;
 import android.content.SharedPreferences;
 
@@ -53,49 +55,47 @@ public class NeuraEventsService extends FirebaseMessagingService {
 	@Override
 	public void onMessageReceived(RemoteMessage message) {
 		//Log.i("Corona", "onMessageReceived");
-		Map data = message.getData();
+		final Map data = message.getData();
+		NeuraPushCommandFactory pushCommand = NeuraPushCommandFactory.getInstance();
+		Context appContext = getApplicationContext();
 
-		String messageID = message.getMessageId();
 
-		NeuraEventCallBack neuraEventCallBack = new NeuraEventCallBack() {
+		boolean isNeuraPush = pushCommand.isNeuraPush(appContext, data, new NeuraEventCallBack() {
+
 			@Override
 			public void neuraEventDetected(NeuraEvent event) {
-				//// FIXME: 30.08.2017
+				String eventText = event != null ? event.toString() : "couldn't parse data";
+
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("type", "Success");
+				params.put("data", data.get("pushData"));
+				LuaLoader.dispatch(params, "onNeuraMessageReceived", -1);
+
+				Log.i(getClass().getSimpleName(), "received Neura event - " + eventText);
+
+				SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("neuraplugin", 0);
+				boolean usingCustomReminders = mPrefs.getBoolean("usingCustomReminders", false);
+
+				//Log.d("Corona", "usingCustomReminders retrieved as " + usingCustomReminders);
+				if (usingCustomReminders)
+				{
+					checkForNeuraAlarm(getApplicationContext(), event);
+				}
+				else
+				{
+					generateNotification(getApplicationContext(), event);
+				}
+
+				//Not mandatory, just gives Neura sdk feedback on the event
+				NeuraApiClient.sendFeedbackOnEvent(getApplicationContext(), event.getNeuraId());
 			}
-		};
+		});
 
-		if (NeuraPushCommandFactory.getInstance().isNeuraPush(getApplicationContext(), data, neuraEventCallBack)) {
-			NeuraEvent event = NeuraPushCommandFactory.getInstance().getEvent(data);
-			String eventText = event != null ? event.toString() : "couldn't parse data";
-
-			//Log.i("Corona", "received Neura event - " + eventText);
-			HashMap<String, Object> params = new HashMap<>();
-			params.put("type", "Success");
-			params.put("data", data.get("pushData"));
-			LuaLoader.dispatch(params, "onNeuraMessageReceived", -1);
-
-
-			
-			//String PACKAGE_NAME = getApplicationContext().getPackageName();
-			//Log.i("Corona", "packagename = " + PACKAGE_NAME);
-			//String myDaysString = "mydays";	
-
-			SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("neuraplugin", 0);
-			boolean usingCustomReminders = mPrefs.getBoolean("usingCustomReminders", false);	
-
-			//Log.d("Corona", "usingCustomReminders retrieved as " + usingCustomReminders);
-			
-			if (usingCustomReminders == true)
-			{
-				checkForNeuraAlarm(getApplicationContext(), event);
-			}
-			else
-			{
-				generateNotification(getApplicationContext(), event);
-			}
+		if(!isNeuraPush) {
+			//Handle non neura push here
+			Log.i(getClass().getSimpleName(), "FCM RemoteMessage not sent by Neura server");
 		}
 	}
-
 
     /*public boolean doesNeuraAlarmExist(int id){
 		boolean doesExist = false;
