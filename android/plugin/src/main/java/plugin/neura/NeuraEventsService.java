@@ -65,7 +65,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 			@Override
 			public void neuraEventDetected(NeuraEvent event) {
 				String eventText;
-				if(event != null && event.toString() != "") {
+				if(event != null && !event.toString().isEmpty()) {
 					eventText = event.toString();
 				}
 				else {
