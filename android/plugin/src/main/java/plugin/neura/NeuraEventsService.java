@@ -64,7 +64,13 @@ public class NeuraEventsService extends FirebaseMessagingService {
 
 			@Override
 			public void neuraEventDetected(NeuraEvent event) {
-				String eventText = event != null ? event.toString() : "couldn't parse data";
+				String eventText;
+				if(event != null && event.toString() != "") {
+					eventText = event.toString();
+				}
+				else {
+					eventText = "couldn't parse data";
+				}
 
 				HashMap<String, Object> params = new HashMap<>();
 				params.put("type", "Success");
