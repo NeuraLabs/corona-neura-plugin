@@ -1453,25 +1453,40 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		//Instantiate AnonymousAuthenticationRequest instance.
 		AnonymousAuthenticationRequest request = new AnonymousAuthenticationRequest(pushToken);
 		boolean result = mNeuraApiClient.authenticate(request, new AnonymousAuthenticateCallBack() {
-			@Override
-			public  void onSuccess(AnonymousAuthenticateData authenticateData) {
-				HashMap<String, Object> params = new HashMap<>();
-				params.put("type", "Success");
-				Hashtable<String, Object> data = new Hashtable<>();
-				data.put("neuraUserId", authenticateData.getNeuraUserId());
-				//data.put("accessToken", authenticateData.getAccessToken());
-				/*ArrayList<EventDefinition> events = authenticateData.getEvents();
-				Hashtable<Integer, Object> eventsJson = new Hashtable<Integer, Object>();
-				for (EventDefinition event : events){
-					Hashtable<Object, Object> ht = jsonToHashTable(L, event.toJson().toString());
-					eventsJson.put(eventsJson.size()+1, ht);
-				}
-				data.put("events", eventsJson);
-				*/
-				params.put("data", data);
+					@Override
+			public  void onSuccess(final AnonymousAuthenticateData authenticateData) {
+				mNeuraApiClient.registerAuthStateListener(new AnonymousAuthenticationStateListener() {
+					@Override
+					public void onStateChanged(AuthenticationState state) {
+						switch (state) {
+							case AccessTokenRequested:
+								break;
+							case AuthenticatedAnonymously:
+								// successful authentication
+								mNeuraApiClient.unregisterAuthStateListener();
 
-				dispatch(params, "authenticate", finalListener);
+								HashMap<String, Object> params = new HashMap<>();
+								params.put("type", "Success");
+								Hashtable<String, Object> data = new Hashtable<>();
+								data.put("neuraUserId", authenticateData.getNeuraUserId());
 
+								params.put("data", data);
+
+								dispatch(params, "authenticate", finalListener);
+
+
+								dispatch(params, "userAuthenticated", finalListener);
+								break;
+							case NotAuthenticated:
+							case FailedReceivingAccessToken:
+								// Authentication failed indefinitely. a good opportunity to retry the authentication flow
+								mNeuraApiClient.unregisterAuthStateListener();
+								break;
+							default:
+						}
+
+					}
+				});
 			}
 
 			@Override
