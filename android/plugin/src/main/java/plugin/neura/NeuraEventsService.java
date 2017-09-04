@@ -67,6 +67,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 				String eventText;
 				if(event != null && !event.toString().isEmpty()) {
 					eventText = event.toString();
+					LuaLoader.dispatch(params, "onNeuraMessageReceived", -1);
 				}
 				else {
 					eventText = "couldn't parse data";
@@ -75,7 +76,7 @@ public class NeuraEventsService extends FirebaseMessagingService {
 				HashMap<String, Object> params = new HashMap<>();
 				params.put("type", "Success");
 				params.put("data", data.get("pushData"));
-				LuaLoader.dispatch(params, "onNeuraMessageReceived", -1);
+				
 
 				Log.i(getClass().getSimpleName(), "received Neura event - " + eventText);
 
@@ -91,9 +92,6 @@ public class NeuraEventsService extends FirebaseMessagingService {
 				{
 					generateNotification(getApplicationContext(), event);
 				}
-
-				//Not mandatory, just gives Neura sdk feedback on the event
-				NeuraApiClient.sendFeedbackOnEvent(getApplicationContext(), event.getNeuraId());
 			}
 		});
 
