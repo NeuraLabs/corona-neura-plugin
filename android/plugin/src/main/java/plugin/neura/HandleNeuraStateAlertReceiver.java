@@ -25,7 +25,7 @@ public class HandleNeuraStateAlertReceiver extends NeuraStateAlertReceiver {
 		Log.d("Corona", "Neura detected missing permission : " + permission);
 
 		LuaLoader.dispatch(params, "onDetectedMissingPermission", -1);
-		Toast.makeText(context, "Neura detected missing permission : " + permission, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(context, "Neura detected missing permission : " + permission, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -36,8 +36,7 @@ public class HandleNeuraStateAlertReceiver extends NeuraStateAlertReceiver {
 		Log.d("Corona", "Neura detected missing permission BUT user already pressed 'Never ask again': "
 				+ permission);
 		LuaLoader.dispatch(params, "onDetectedMissingPermissionAfterUserPressedNeverAskAgain", -1);
-		Toast.makeText(context, "Neura detected missing permission BUT user already pressed 'Never ask again': "
-				+ permission, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(context, "Neura detected missing permission BUT user already pressed 'Never ask again': " + permission, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -68,8 +67,10 @@ public class HandleNeuraStateAlertReceiver extends NeuraStateAlertReceiver {
 				" sensor is " + (isEnabled ? "enabled" : "disabled"));
 		LuaLoader.dispatch(params, "onDetectedMissingPermissionAfterUserPressedNeverAskAgain", -1);
 
-		Toast.makeText(context, "Neura detected that " + SensorsManager.getInstance().getSensorName(sensorType) +
+		/*Toast.makeText(context, "Neura detected that " + SensorsManager.getInstance().getSensorName(sensorType) +
 				" sensor is " + (isEnabled ? "enabled" : "disabled"), Toast.LENGTH_SHORT).show();
+		*/
+
 		/**
 		 * If the sensor is disabled, you may open the settings with an intent, in an activity's context :
 		 */
