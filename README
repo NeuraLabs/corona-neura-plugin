@@ -1,0 +1,17 @@
+README
+
+Dependencies cna be added to:
+/android/plugin/build.gradle
+
+To build plugin:
+cd to dir
+./gradlew clean assembleRelease
+
+plugin aar will be built to:
+plugin/build/outputs/aar/plugin-release.aar
+rename .aar to .zip and extract contents
+rename classes.jar to plugin.neura.jar
+
+Add plugin.neura.jar to Corona repo.
+Assets and resources will need to be added manually.
+Metadata should be updated to include contents of the SDKs AndroidManifest.xml, must keep the plugin specific stuff though.
