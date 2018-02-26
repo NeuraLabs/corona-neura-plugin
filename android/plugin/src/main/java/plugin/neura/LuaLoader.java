@@ -1,10 +1,6 @@
 package plugin.neura;
 
-import com.neura.resources.authentication.AnonymousAuthenticateCallBack;
-import com.neura.resources.authentication.AnonymousAuthenticateData;
-import com.neura.resources.authentication.AnonymousAuthenticationStateListener;
-import com.neura.resources.authentication.AuthenticationState;
-import com.neura.sdk.object.AnonymousAuthenticationRequest;
+
 //import com.ansca.corona.CoronaActivity;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,6 +53,16 @@ import com.neura.sdk.object.EventDefinition;
 import com.neura.standalonesdk.util.SDKUtils;
 
 
+import com.neura.resources.authentication.AnonymousAuthenticateCallBack;
+import com.neura.resources.authentication.AnonymousAuthenticateData;
+import com.neura.sdk.object.AnonymousAuthenticationRequest;
+
+import com.neura.resources.authentication.AnonymousAuthenticationStateListener;
+import com.neura.resources.authentication.AuthenticationState;
+
+
+
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -86,6 +92,9 @@ import android.content.SharedPreferences;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
+import android.provider.Settings;
+import android.net.Uri;
+
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	// Neura
@@ -97,11 +106,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.17";
+	public static final String PLUGIN_VERSION = "1.0.27";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
 
+    public String appUid;
+    public String appSecret;
 
 
     //Neura alarm types
@@ -123,6 +134,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		CoronaEnvironment.addRuntimeListener(this);
 	}
 
+
+	public NeuraApiClient getClient() {
+        return mNeuraApiClient;
+    }
+
+    public void setClient(NeuraApiClient client) {
+        mNeuraApiClient = client;
+    }
+
 	@Override
 	public int invoke(LuaState L) {
 		fDispatcher = new CoronaRuntimeTaskDispatcher( L );
@@ -131,41 +151,42 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				new ConnectWrapper(),
 				new DisconnectWrapper(),
 				new AuthenticateWrapper(),
-				new AddDeviceWrapper(),
-				new AddPlaceWrapper(),
-				new EnableAutomaticallySyncLogsWrapper(),
-				new EnableNeuraHandingStateAlertMessagesWrapper(),
+				//new AddDeviceWrapper(),
+				//new AddPlaceWrapper(),
+				//new EnableAutomaticallySyncLogsWrapper(),
+				//new EnableNeuraHandingStateAlertMessagesWrapper(),
 				new ForgetMeWrapper(),
-				new GetAppPermissionsWrapper(),
-				new GetDailySummaryWrapper(),
-				new GetKnownCapabilitiesWrapper(),
-				new GetKnownDevicesWrapper(),
-				new GetLocationBasedEventsWrapper(),
-				new GetMissingDataForEventWrapper(),
-				new GetPermissionStatusWrapper(),
-				new GetSdkVersionWrapper(),
-				new GetSleepProfileWrapper(),
-				new GetSubscriptionsWrapper(),
-				new GetUserDetailsWrapper(),
-				new GetUserPhoneWrapper(),
-				new GetUserPlaceByLabelTypeWrapper(),
-				new GetUserSituationWrapper(),
-				new HasDeviceWithCapabilityWrapper(),
+				//new GetAppPermissionsWrapper(),
+				//new GetDailySummaryWrapper(),
+				//new GetKnownCapabilitiesWrapper(),
+				//new GetKnownDevicesWrapper(),
+				//new GetLocationBasedEventsWrapper(),
+				//new GetMissingDataForEventWrapper(),
+				//new GetPermissionStatusWrapper(),
+				//new GetSdkVersionWrapper(),
+				//new GetSleepProfileWrapper(),
+				//new GetSubscriptionsWrapper(),
+				//new GetUserDetailsWrapper(),
+				//new GetUserPhoneWrapper(),
+				//new GetUserPlaceByLabelTypeWrapper(),
+				//new GetUserSituationWrapper(),
+				//new HasDeviceWithCapabilityWrapper(),
 				new IsLoggedInWrapper(),
-				new IsMissingDataForEventWrapper(),
+				//new IsMissingDataForEventWrapper(),
 				new RegisterFirebaseTokenWrapper(),
-				new RemoveSubscriptionWrapper(),
-				new SendFeedbackOnEventWrapper(),
-				new ShouldSubscribeToEventWrapper(),
+				//new RemoveSubscriptionWrapper(),
+				//new SendFeedbackOnEventWrapper(),
+				//new ShouldSubscribeToEventWrapper(),
 				new SimulateAnEventWrapper(),
 				new SubscribeToEventWrapper(),
 				new RegisterNotificationForEventWrapper(),
-				new UnregisterNotificationForEventWrapper(),
+				//new UnregisterNotificationForEventWrapper(),
 				new SetReminderWrapper(),
 				new CancelReminderWrapper(),
 				new SnoozeReminderWrapper(),
 				new ClearNotificationWrapper(),
 				new GetPluginVersionWrapper(),
+				new OpenSettingsWrapper(),
 
 
 		};
@@ -1369,8 +1390,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			fListener = CoronaLua.newRef(L, -1);
 		}
 		Hashtable<Object, Object> args = CoronaLua.toHashtable(L, 1);
-		String appUid = args.get("appUid").toString();
-		String appSecret = args.get("appSecret").toString();
+		appUid = args.get("appUid").toString();
+		appSecret = args.get("appSecret").toString();
 
 		boolean usingCustomReminders = false;
 		if (L.isTable(2)){
@@ -1392,15 +1413,24 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			return 0;
 		}
 
-		Builder builder = new Builder(activity.getApplicationContext());
-		mNeuraApiClient = builder.build();
-		mNeuraApiClient.setAppUid(appUid);
-		mNeuraApiClient.setAppSecret(appSecret);
+		
+
+		final String final_appid = appUid;
+		final String final_appSecret = appSecret;
+		final Context final_context = context;
+
 		activity.runOnUiThread(new Runnable() {
 			@Override
 
 			public void run() {
-				mNeuraApiClient.connect();
+
+				mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+				/*Builder builder = new Builder(final_context);
+				mNeuraApiClient = builder.build();
+				setClient(mNeuraApiClient);
+				mNeuraApiClient.setAppUid(final_appid);
+				mNeuraApiClient.setAppSecret(final_appSecret);
+				mNeuraApiClient.connect();*/
 			}
 		});
 
@@ -1435,7 +1465,25 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int disconnect(LuaState L) {
-		mNeuraApiClient.disconnect();
+		//mNeuraApiClient.disconnect();
+
+		if (appUid != null)
+		{
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
+
+			activity.runOnUiThread(new Runnable() {
+				@Override
+
+				public void run() {
+
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					mNeuraApiClient.disconnect();
+				}
+			});
+		}
 
 		return 0;
 	}
@@ -1446,67 +1494,90 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		if ( CoronaLua.isListener( L, -1, "" ) ) {
 			listener = CoronaLua.newRef(L, -1);
 		}
-		final int finalListener = listener;
-		final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 
-		//Get the FireBase Instance ID, we will use it to instantiate AnonymousAuthenticationRequest
-		String pushToken = FirebaseInstanceId.getInstance().getToken();
-
-		//Instantiate AnonymousAuthenticationRequest instance.
-		AnonymousAuthenticationRequest request = new AnonymousAuthenticationRequest(pushToken);
-		boolean result = mNeuraApiClient.authenticate(request, new AnonymousAuthenticateCallBack() {
-			@Override
-			public  void onSuccess(final AnonymousAuthenticateData authenticateData) {
-				mNeuraApiClient.registerAuthStateListener(new AnonymousAuthenticationStateListener() {
-					@Override
-					public void onStateChanged(AuthenticationState state) {
-						switch (state) {
-							case AccessTokenRequested:
-								break;
-							case AuthenticatedAnonymously:
-								// successful authentication
-								mNeuraApiClient.unregisterAuthStateListener();
-
-								HashMap<String, Object> params = new HashMap<>();
-								params.put("type", "Success");
-								Hashtable<String, Object> data = new Hashtable<>();
-								data.put("neuraUserId", authenticateData.getNeuraUserId());
-
-								params.put("data", data);
-
-								dispatch(params, "authenticate", finalListener);
+		if (appUid != null)
+		{
+			final int finalListener = listener;
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 
 
-								dispatch(params, "userAuthenticated", finalListener);
-								break;
-							case NotAuthenticated:
-							case FailedReceivingAccessToken:
-								// Authentication failed indefinitely. a good opportunity to retry the authentication flow
-								mNeuraApiClient.unregisterAuthStateListener();
-								break;
-							default:
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
+
+			activity.runOnUiThread(new Runnable() {
+				@Override
+
+				public void run() {
+
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					//Get the FireBase Instance ID, we will use it to instantiate AnonymousAuthenticationRequest
+					String pushToken = FirebaseInstanceId.getInstance().getToken();
+
+					//Instantiate AnonymousAuthenticationRequest instance.
+					AnonymousAuthenticationRequest request = new AnonymousAuthenticationRequest(pushToken);
+					boolean result = mNeuraApiClient.authenticate(request, new AnonymousAuthenticateCallBack() {
+						@Override
+						public  void onSuccess(final AnonymousAuthenticateData authenticateData) {
+							mNeuraApiClient.registerAuthStateListener(new AnonymousAuthenticationStateListener() {
+								@Override
+								public void onStateChanged(AuthenticationState state) {
+									switch (state) {
+										case AccessTokenRequested:
+											break;
+										case AuthenticatedAnonymously:
+											// successful authentication
+											mNeuraApiClient.unregisterAuthStateListener();
+
+											HashMap<String, Object> params = new HashMap<>();
+											params.put("type", "Success");
+											Hashtable<String, Object> data = new Hashtable<>();
+											data.put("neuraUserId", authenticateData.getNeuraUserId());
+
+											params.put("data", data);
+
+											dispatch(params, "authenticate", finalListener);
+
+
+											dispatch(params, "userAuthenticated", finalListener);
+											break;
+										case NotAuthenticated:
+										case FailedReceivingAccessToken:
+											// Authentication failed indefinitely. a good opportunity to retry the authentication flow
+											mNeuraApiClient.unregisterAuthStateListener();
+											break;
+										default:
+									}
+
+								}
+							});
+
+
+
 						}
 
-					}
-				});
+						@Override
+						public void onFailure(int errorCode) {
+							HashMap<String, Object> params = new HashMap<>();
+							params.put("type", "Failure");
+							params.put("isError", true);
+							params.put("response", "" + errorCode);
+							params.put("data", SDKUtils.errorCodeToString(errorCode));
+
+							dispatch(params, "authenticate", finalListener);
+
+						}
+					});
+				}
+			});
+		}
 
 
+		
 
-			}
 
-			@Override
-			public void onFailure(int errorCode) {
-				HashMap<String, Object> params = new HashMap<>();
-				params.put("type", "Failure");
-				params.put("isError", true);
-				params.put("response", "" + errorCode);
-				params.put("data", SDKUtils.errorCodeToString(errorCode));
-
-				dispatch(params, "authenticate", finalListener);
-
-			}
-		});
-		L.pushBoolean(result);
+		//L.pushBoolean(result);
+		L.pushBoolean(true);
 		return 1;
 	}
 /*
@@ -1581,49 +1652,69 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			return 0;
 		}
 
-		String eventName = L.toString(1);
-		String eventIdentifier = L.toString(2);
-		int listener = fListener;
-		if ( CoronaLua.isListener( L, -1, "" ) ) {
-			listener = CoronaLua.newRef(L, -1);
+		if (appUid != null)
+		{
+			String eventName = L.toString(1);
+			String eventIdentifier = L.toString(2);
+			int listener = fListener;
+			if ( CoronaLua.isListener( L, -1, "" ) ) {
+				listener = CoronaLua.newRef(L, -1);
+			}
+
+
+			final int finalListener = listener;
+
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
+			final String final_eventName = eventName;
+			final String final_eventIdentifier = eventIdentifier;
+
+			activity.runOnUiThread(new Runnable() {
+				@Override
+
+				public void run() {
+
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					mNeuraApiClient.subscribeToEvent(final_eventName, final_eventIdentifier,
+					new SubscriptionRequestCallbacks() {
+						@Override
+						public void onSuccess(String eventName, Bundle bundle, String eventIdentifier) {
+							HashMap<String, Object> params = new HashMap<>();
+							params.put("type", "Success");
+							Hashtable<String, String> eventData = new Hashtable<String, String>();
+							eventData.put("eventName", final_eventName);
+							eventData.put("eventIdentifier", final_eventIdentifier);
+							params.put("event", eventData);
+
+							dispatch(params, "subscribeToEvent", finalListener);
+						}
+
+						@Override
+						public void onFailure(String eventName, Bundle bundle, int i) {
+							HashMap<String, Object> params = new HashMap<>();
+							params.put("type", "Failure");
+							Hashtable<String, String> eventData = new Hashtable<String, String>();
+							eventData.put("eventName", final_eventName);
+							params.put("event", eventData);
+
+							params.put("isError", true);
+							params.put("response", ""+i);
+							params.put("data", SDKUtils.errorCodeToString(i));
+
+							dispatch(params, "subscribeToEvent", finalListener);
+						}
+					});
+				}
+			});
 		}
-
-
-		final int finalListener = listener;
-		mNeuraApiClient.subscribeToEvent(eventName, eventIdentifier,
-				new SubscriptionRequestCallbacks() {
-					@Override
-					public void onSuccess(String eventName, Bundle bundle, String eventIdentifier) {
-						HashMap<String, Object> params = new HashMap<>();
-						params.put("type", "Success");
-						Hashtable<String, String> eventData = new Hashtable<String, String>();
-						eventData.put("eventName", eventName);
-						eventData.put("eventIdentifier", eventIdentifier);
-						params.put("event", eventData);
-
-						dispatch(params, "subscribeToEvent", finalListener);
-					}
-
-					@Override
-					public void onFailure(String eventName, Bundle bundle, int i) {
-						HashMap<String, Object> params = new HashMap<>();
-						params.put("type", "Failure");
-						Hashtable<String, String> eventData = new Hashtable<String, String>();
-						eventData.put("eventName", eventName);
-						params.put("event", eventData);
-
-						params.put("isError", true);
-						params.put("response", ""+i);
-						params.put("data", SDKUtils.errorCodeToString(i));
-
-						dispatch(params, "subscribeToEvent", finalListener);
-					}
-				});
+			
 
 		return 0;
 	}
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int addDevice(LuaState L) {
 
 		int listener = fListener;
@@ -1643,54 +1734,91 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		};
 
 		boolean result = false;
-		if (L.isTable(1)){
-			Hashtable<Object, Object> params = CoronaLua.toHashtable(L, 1);
-			if (params.containsKey("deviceName")){
-				mNeuraApiClient.addDevice(params.get("deviceName").toString(), callback);
-			}else if(params.containsKey("deviceCapabilityNames")){
-				Hashtable<Object, Object> deviceCapabilityNames = (Hashtable<Object, Object>)params.get("deviceCapabilityNames");
-				Collection<Object> names = deviceCapabilityNames.values();
-				ArrayList<String> namesList = new ArrayList<>();
-				for (Object name : names){
-					namesList.add(name.toString());
+
+		final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		final String final_appid = appUid;
+		final String final_appSecret = appSecret;
+		final Context final_context = activity.getApplicationContext();;a
+		final LuaState final_L = L;
+
+		activity.runOnUiThread(new Runnable() {
+			@Override
+
+			public void run() {
+
+				mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+				if (final_L.isTable(1)){
+					Hashtable<Object, Object> params = CoronaLua.toHashtable(final_L, 1);
+					if (params.containsKey("deviceName")){
+						mNeuraApiClient.addDevice(params.get("deviceName").toString(), callback);
+					}else if(params.containsKey("deviceCapabilityNames")){
+						Hashtable<Object, Object> deviceCapabilityNames = (Hashtable<Object, Object>)params.get("deviceCapabilityNames");
+						Collection<Object> names = deviceCapabilityNames.values();
+						ArrayList<String> namesList = new ArrayList<>();
+						for (Object name : names){
+							namesList.add(name.toString());
+						}
+						result = mNeuraApiClient.addDevice(namesList, callback);
+					}else{
+						result = mNeuraApiClient.addDevice(callback);
+					}
+				}else{
+					result = mNeuraApiClient.addDevice(callback);
 				}
-				result = mNeuraApiClient.addDevice(namesList, callback);
-			}else{
-				result = mNeuraApiClient.addDevice(callback);
 			}
-		}else{
-			result = mNeuraApiClient.addDevice(callback);
-		}
+		});
+
+		
 
 		L.pushBoolean(result);
 		return 1;
-	}
+	}*/
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int addPlace(LuaState L) {
 		// TODO
 		return 0;
-	}
+	}*/
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int enableAutomaticallySyncLogs(LuaState L) {
 		boolean enabled = true;
 		if (L.isBoolean(1)){
 			enabled = L.toBoolean(1);
 		}
-		mNeuraApiClient.enableAutomaticallySyncLogs(enabled);
-		return 0;
-	}
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+
+		final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+		final String final_appid = appUid;
+		final String final_appSecret = appSecret;
+		final Context final_context = activity.getApplicationContext();
+		final boolean final_enabled = enabled;
+
+		activity.runOnUiThread(new Runnable() {
+			@Override
+
+			public void run() {
+
+				mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+				mNeuraApiClient.enableAutomaticallySyncLogs(final_enabled);
+			}
+		});
+
+		return 0;
+	}*/
+
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int enableNeuraHandingStateAlertMessages(LuaState L) {
 		boolean enabled = true;
 		if (L.isBoolean(1)){
 			enabled = L.toBoolean(1);
 		}
-		mNeuraApiClient.enableNeuraHandingStateAlertMessages(enabled);
+		if (mNeuraApiClient != null)
+		{ 
+			mNeuraApiClient.enableNeuraHandingStateAlertMessages(enabled);
+		}
 		return 0;
-	}
+	}*/
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int forgetMe(LuaState L) {
@@ -1727,7 +1855,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		return 0;
 	}
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int getAppPermissions(final LuaState L) {
 		int listener = fListener;
 		if ( CoronaLua.isListener( L, -1, "" ) ) {
@@ -1891,13 +2019,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	public int getPermissionStatus(LuaState L) {
 
 		return 0;
-	}
+	}*/
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int getSdkVersion(LuaState L) {
 		L.pushString(mNeuraApiClient.getSdkVersion());
 		return 1;
-	}
+	}*/
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int getPluginVersion(LuaState L) {
@@ -1905,7 +2033,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		return 1;
 	}
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int getSleepProfile(final LuaState L) {
 		if (!L.isNumber(1) || !L.isNumber(2)){
 			Log.e("Corona", "neura.getSleepProfile() takes numbers as the first two arguments.");
@@ -2093,15 +2221,39 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		L.pushBoolean(hasCapability);
 
 		return 1;
-	}
+	}*/
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
-	public int isLoggedIn(LuaState L) {
-		L.pushBoolean(mNeuraApiClient.isLoggedIn());
+	public int isLoggedIn(final LuaState L) {
+			
+		if (appUid != null)
+		{
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
+
+			activity.runOnUiThread(new Runnable() {
+				@Override
+
+				public void run() {
+
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					L.pushBoolean(mNeuraApiClient.isLoggedIn());
+
+					//return 1;
+				}
+			});
+		}
+		else
+		{
+			L.pushBoolean(false);
+		}
 
 		return 1;
+		
 	}
-
+	/*
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int isMissingDataForEvent(LuaState L) {
 		if (!L.isString(1)){
@@ -2114,18 +2266,38 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		L.pushBoolean(mNeuraApiClient.isMissingDataForEvent(eventName));
 
 		return 1;
-	}
+	}*/
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int registerFirebaseToken(LuaState L) {
-		CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
-		String firebaseToken = FirebaseInstanceId.getInstance(FirebaseApp.getInstance()).getToken();
-		Log.d("Corona", "Firebase token: " + firebaseToken);
-		mNeuraApiClient.registerFirebaseToken(activity, firebaseToken);
+
+		if (appUid != null)
+		{
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			String firebaseToken = FirebaseInstanceId.getInstance(FirebaseApp.getInstance()).getToken();
+			Log.d("Corona", "Firebase token: " + firebaseToken);
+			
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
+			final String final_firebaseToken = firebaseToken;
+
+			activity.runOnUiThread(new Runnable() {
+				@Override
+
+				public void run() {
+
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					mNeuraApiClient.registerFirebaseToken(activity, final_firebaseToken);
+				}
+			});
+		}
+
+
 		return 0;
 	}
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int removeSubscription(LuaState L) {
 		if (!L.isString(1) || !L.isString(2)){
 			Log.e("Corona", "neura.removeSubscription(eventName, eventIdentifier) takes strings as the first two arguments.");
@@ -2174,9 +2346,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				});
 
 		return 0;
-	}
+	}*/
 
-	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int sendFeedbackOnEvent(LuaState L) {
 		if (!L.isString(1) || !L.isBoolean(2)){
 			Log.e("Corona", "neura.sendFeedbackOnEvent(neuraId, approved) takes string as the first arguments and boolean as the second argument.");
@@ -2198,11 +2370,30 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		boolean result = mNeuraApiClient.shouldSubscribeToEvent(eventName);
 		L.pushBoolean(result);
 		return 1;
-	}
+	}*/
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int simulateAnEvent(LuaState L) {
-		mNeuraApiClient.simulateAnEvent();
+		
+		if (appUid != null)
+		{
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
+
+			activity.runOnUiThread(new Runnable() {
+				@Override
+
+				public void run() {
+
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					mNeuraApiClient.simulateAnEvent();
+				}
+			});
+		}
+
+
 		return 0;
 	}
 
@@ -2251,7 +2442,24 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		return 0;
 	}
 
+
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int openSettings(LuaState L) {
+	
+		final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+
+		Intent intent = new Intent();
+		intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+		Uri uri = Uri.fromParts("package", activity.getApplicationContext().getPackageName(), null);
+		intent.setData(uri);
+		activity.startActivity(intent);
+
+		return 0;
+	}
+
+	
+
+	/*@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int unregisterNotificationForEvent(final LuaState L) {
 		if ( !L.isString(1) ) {
 			Log.e("Corona", "neura.unregisterNotificationForEvent(eventName) takes string as the first arguments and table as the second argument.");
@@ -2289,7 +2497,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 
 		return 0;
-	}
+	}*/
 
 	@SuppressWarnings("unused")
 	private class ConnectWrapper implements NamedJavaFunction {
@@ -2347,7 +2555,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class AddDeviceWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2359,9 +2567,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return addDevice(L);
 		}
-	}
+	}*/
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class AddPlaceWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2373,9 +2581,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return addPlace(L);
 		}
-	}
+	}*/
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class EnableAutomaticallySyncLogsWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2387,9 +2595,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return enableAutomaticallySyncLogs(L);
 		}
-	}
+	}*/
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class EnableNeuraHandingStateAlertMessagesWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2401,7 +2609,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return enableNeuraHandingStateAlertMessages(L);
 		}
-	}
+	}*/
 
 	@SuppressWarnings("unused")
 	private class ForgetMeWrapper implements NamedJavaFunction {
@@ -2417,7 +2625,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class GetAppPermissionsWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2527,7 +2735,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return getSdkVersion(L);
 		}
-	}
+	}*/
 
 	@SuppressWarnings("unused")
 	private class GetPluginVersionWrapper implements NamedJavaFunction {
@@ -2543,7 +2751,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class GetSleepProfileWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2639,7 +2847,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return hasDeviceWithCapability(L);
 		}
-	}
+	}*/
 
 	@SuppressWarnings("unused")
 	private class IsLoggedInWrapper implements NamedJavaFunction {
@@ -2655,7 +2863,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class IsMissingDataForEventWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2667,7 +2875,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return isMissingDataForEvent(L);
 		}
-	}
+	}*/
 
 	@SuppressWarnings("unused")
 	private class RegisterFirebaseTokenWrapper implements NamedJavaFunction {
@@ -2683,7 +2891,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class RemoveSubscriptionWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2723,7 +2931,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return shouldSubscribeToEvent(L);
 		}
-	}
+	}*/
 
 	@SuppressWarnings("unused")
 	private class SimulateAnEventWrapper implements NamedJavaFunction {
@@ -2753,7 +2961,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	private class UnregisterNotificationForEventWrapper implements NamedJavaFunction {
 
 		@Override
@@ -2765,6 +2973,21 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		public int invoke(LuaState L) {
 			return unregisterNotificationForEvent(L);
 		}
+	}*/
+
+	@SuppressWarnings("unused")
+	private class OpenSettingsWrapper implements NamedJavaFunction {
+
+		@Override
+		public String getName() {
+			return "openSettings";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return openSettings(L);
+		}
 	}
+	
 
 }

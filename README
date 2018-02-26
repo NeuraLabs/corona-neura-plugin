@@ -1,17 +1,122 @@
-README
+The main plugin java file:
+	NeuraRepo/android/plugin/src/main/java/plugin/neura/LuaLoader.java
+Most changes you will need to make will involve this file. I'm assuming that whoever will make these changes will be familiar enough with java. The functions will be accessed from Lua via wrapper functions. The current plugin has plenty of examples, I would suggest that the isLoggedIn() function is one of the simpler ones to examine:
 
-Dependencies cna be added to:
-/android/plugin/build.gradle
+	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
+	public int isLoggedIn(final LuaState L) {
+			
+		if (appUid != null)
+		{
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
 
-To build plugin:
-cd to dir
-./gradlew clean assembleRelease
+			activity.runOnUiThread(new Runnable() {
+				@Override
 
-plugin aar will be built to:
-plugin/build/outputs/aar/plugin-release.aar
-rename .aar to .zip and extract contents
-rename classes.jar to plugin.neura.jar
+				public void run() {
 
-Add plugin.neura.jar to Corona repo.
-Assets and resources will need to be added manually.
-Metadata should be updated to include contents of the SDKs AndroidManifest.xml, must keep the plugin specific stuff though.
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					L.pushBoolean(mNeuraApiClient.isLoggedIn());
+
+					//return 1;
+				}
+			});
+		}
+		else
+		{
+			L.pushBoolean(false);
+		}
+
+		return 1;
+		
+	}
+
+	//THE WRAPPER FUNCTION ACCESSED BY LUA
+	@SuppressWarnings("unused")
+	private class IsLoggedInWrapper implements NamedJavaFunction {
+
+		@Override
+		public String getName() {
+			//THE NAME OF THE FUNCTION AS IT WILL BE CALLED IN LUA
+			//E.G. neura.isLoggedIn()
+			return "isLoggedIn";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			//THE JAVA FUNCTION THAT SHOULD BE CALLED WHEN LUA CALLS THIS WRAPPER FUNCTION
+			return isLoggedIn(L);
+		}
+	}
+
+In order to make the wrapper function visible to Lua, it also needs to be added to an array of functions that make up the plugin library. Search for "luaFunctions" in the java file, and you should see that the current function wrappers are listed there. Just add 
+	new YourNewFunctionNameWrapper(),
+to the array.
+
+There is a plugin version number variable in this file, which should be incremented each time the plugin is uploaded to Corona:
+	public static final String PLUGIN_VERSION = "1.0.27";
+
+Plugin gradle file:
+	NeuraRepo/android/plugin/build.gradle
+
+Any resources should be added here prior to building the plugin:
+	NeuraRepo/android/plugin/src/main/res/
+
+To build the plugin:
+	cd NeuraRepo/android
+	./gradlew clean assembleRelease
+
+This will build an aar file...
+	NeuraRepo/android/plugin/build/outputs/aar/plugin-release.aar
+...which we need to extract a jar from. Either rename aar to zip and extract contents, or use any tool you have for accessing contents of aar files.
+
+Rename the file classes.jar to plugin.neura.jar
+
+Copy the file to the Corona hosted repository. The repository has the following structure:
+	repo -- | -- Readme.markdown
+		    | -- metadata.json
+		    | -- plugins -- | -- 2017.3184 -- | -- android
+		    								  | -- iphone
+		    								  | -- iphone-sim
+		    								  | -- mac-sim
+		    								  | -- win32-sim
+
+
+
+The directory 2017.3184 should be named to match the minimum build number of Corona that the plugin will support. Multiple directories can be used to continue legacy support for older versions. For example if there is a 2017.3050 directory and a 2017.3184 directory, developers using Corona 2017.3050 - 2017.3183 will automatically use the older version and developers using 2017.3184+ will use the newer version. Developers using <= 2017.3049 would not be able to access the plugin.
+
+Within the android directory place the following:
+	plugin.neura.jar
+	com.neura-x.x.x.jar (where x.x.x is whatever the latest SDK number is)
+	com.android.volley-1.0.0.jar
+	armeabi-v7a/libratatouille.so
+	resources/res/anim, values, layout, drawable-xhdpi-v4 etc
+	assets/neura_sdk_country_codes.json
+	assets/public_key_rsa_encryption.der
+	assets/rat_config.json
+	assets/timezones.json
+	metadata.lua
+
+The metadata.lua file will need to be updated based on the latest AndroidManifest settings that the SDK requires.
+	* The format field should always read: format = 'jar'.
+	* usesPermissions and usesFeatures are self explanatory.
+	* applicationChildElements is where you would enter anything that needs to be within the <application> section of the manifest: receivers, services etc.
+	* coronaManifest = { dependencies = {} } - the valid entries can be found here: https://docs.coronalabs.com/native/android/dependencies.html
+	For some reason the awareness dependency is not listed in the docs, and should read 
+		["shared.google.play.services.awareness"] = "com.coronalabs",
+
+
+Within the directories iphone, iphone-sim, mac-sim and win32-sim you need to place stub files - if you don't have a plugin for these formats the stub files will be used in their place. I tend to populate these with functions that print out something along the lines of "WARNING: plugin.neura is not availible for this platform."
+Note: At the bottom of these files you will find the following:
+	lib.getPluginVersion = function()
+		return "1.0.27"
+	end
+I strongly advise updating that version number to match the number in the LuaLoader.java file. This will make it easier to tell when the plugin has propagated to Corona's servers, as you will be able to call the neura.getPluginVersion() in the simulator and see if the value has updated. If not, then it means the old plugin is still live on their system.
+
+Once all files are in place, simply commit and push to the repo. Corona's plugin repositories are checked at least once per hour, so this is the maximum time you should have to wait before you can test the plugin.
+
+There is also the option to use self-hosted plugins which allow you to place the plugin onto your own server for private use with no need to wait for Corona's repo updates - this requires a paid subscription to Corona's Priority Plus Support plan: https://marketplace.coronalabs.com/support/priority-plus-support
+However I was unable to get self hosted plugins to work with the Neura plugin, and so have continued to use the Corona repo for testing. Ultimately the plugin needs to be in Corona's repo if you wish for it to be used by all developers.
+

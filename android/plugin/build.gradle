@@ -35,13 +35,16 @@ tasks.withType(JavaCompile) {
 dependencies {
     compile fileTree(dir: "$coronaEnterpriseDir/Corona/android/lib/Corona/libs", include: '*.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
-//    compile 'com.google.android.gms:play-services-gcm:9.6.1'
-//    compile 'com.google.android.gms:play-services-location:9.6.1'
-//    compile 'com.google.android.gms:play-services-analytics:9.6.1'
-//    compile 'com.android.support:design:25.1.0'
-//    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.theneura:android-sdk:4.3.0'
+
+    compile 'com.theneura:android-sdk:+'
     compile 'com.google.firebase:firebase-messaging:10.2.0'
-    compile "com.google.android.gms:play-services-awareness:10.2.0"
+    
+    //compile "com.google.android.gms:play-services-awareness:10.2.0"
+    //compile 'com.google.android.gms:play-services-gcm:9.6.1'
+    //compile 'com.google.android.gms:play-services-location:9.6.1'
+    //compile 'com.google.android.gms:play-services-analytics:9.6.1'
+    //compile 'com.android.support:design:25.1.0'
+    //compile 'com.android.support:appcompat-v7:25.1.0'
+    //compile 'com.theneura:android-sdk:4.5.1'
 }
 
