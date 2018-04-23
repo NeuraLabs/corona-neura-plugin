@@ -106,7 +106,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.29";
+	public static final String PLUGIN_VERSION = "1.0.30";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
@@ -166,7 +166,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				//new GetSdkVersionWrapper(),
 				//new GetSleepProfileWrapper(),
 				//new GetSubscriptionsWrapper(),
-				//new GetUserDetailsWrapper(),
+				new GetUserDetailsWrapper(),
 				//new GetUserPhoneWrapper(),
 				//new GetUserPlaceByLabelTypeWrapper(),
 				//new GetUserSituationWrapper(),
@@ -2098,6 +2098,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		});
 		return 0;
 	}
+	*/
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int getUserDetails(final LuaState L) {
@@ -2108,24 +2109,45 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 		final int finalListener = listener;
 
-		mNeuraApiClient.getUserDetails(new UserDetailsCallbacks() {
-			@Override
-			public void onSuccess(UserDetails userDetails) {
-				HashMap<String, Object> params = new HashMap<>();
-				params.put("type", "Success");
-				params.put("data", jsonToHashTable(L, userDetails.toJson().toString()));
+		if (appUid != null)
+		{
+			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
+			final String final_appid = appUid;
+			final String final_appSecret = appSecret;
+			final Context final_context = activity.getApplicationContext();
 
-				dispatch(params, "getUserDetails", finalListener);
-			}
+			activity.runOnUiThread(new Runnable() {
+				@Override
 
-			@Override
-			public void onFailure(Bundle resultData, int errorCode) {
-				dispatchOnFailure(resultData, errorCode, "getUserDetails", finalListener);
-			}
-		});
+				public void run() {
+
+					mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
+					mNeuraApiClient.getUserDetails(new UserDetailsCallbacks() {
+					@Override
+					public void onSuccess(UserDetails userDetails) {
+						HashMap<String, Object> params = new HashMap<>();
+						params.put("type", "Success");
+						params.put("data", jsonToHashTable(L, userDetails.toJson().toString()));
+
+						dispatch(params, "getUserDetails", finalListener);
+					}
+
+					@Override
+					public void onFailure(Bundle resultData, int errorCode) {
+						dispatchOnFailure(resultData, errorCode, "getUserDetails", finalListener);
+					}
+				});
+				}
+			});
+		}
+
+		
+
+		
 		return 0;
 	}
 
+	/*
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int getUserPhone(LuaState L) {
 		int listener = fListener;
@@ -2778,6 +2800,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			return getSubscriptions(L);
 		}
 	}
+	*/
 
 	@SuppressWarnings("unused")
 	private class GetUserDetailsWrapper implements NamedJavaFunction {
@@ -2793,6 +2816,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		}
 	}
 
+	/*
 	@SuppressWarnings("unused")
 	private class GetUserPhoneWrapper implements NamedJavaFunction {
 
