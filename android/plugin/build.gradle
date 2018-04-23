@@ -1,8 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    //increased from 25 on 23/04/2018
+    compileSdkVersion 26
+    //increased from 25.0.2 on 23/04/2018
+    buildToolsVersion "26.0.2"
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
@@ -14,7 +16,7 @@ android {
     }
 }
 
-def coronaEnterpriseDir = "$rootDir/CoronaEnterprise"
+def coronaEnterpriseDir = "$rootDir/Native"
 
 task exportPluginJar (type: Copy, description: 'place the plugin JAR file in the outputs directory and give it a name from the AndroidManifest.xml') {
     def pluginName = new XmlSlurper().parse(file('src/main/AndroidManifest.xml')).@package.text()
@@ -38,6 +40,10 @@ dependencies {
 
     compile 'com.theneura:android-sdk:+'
     compile 'com.google.firebase:firebase-messaging:10.2.0'
+
+    //increased from 26.0.2 on 23/04/2018
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:appcompat-v7:26.1.0'
     
     //compile "com.google.android.gms:play-services-awareness:10.2.0"
     //compile 'com.google.android.gms:play-services-gcm:9.6.1'
