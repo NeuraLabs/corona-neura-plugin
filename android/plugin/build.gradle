@@ -14,7 +14,7 @@ android {
     }
 }
 
-def coronaEnterpriseDir = "$rootDir/CoronaEnterprise"
+def coronaEnterpriseDir = "$rootDir/Native"
 
 task exportPluginJar (type: Copy, description: 'place the plugin JAR file in the outputs directory and give it a name from the AndroidManifest.xml') {
     def pluginName = new XmlSlurper().parse(file('src/main/AndroidManifest.xml')).@package.text()
@@ -36,7 +36,7 @@ dependencies {
     compile fileTree(dir: "$coronaEnterpriseDir/Corona/android/lib/Corona/libs", include: '*.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
 
-    compile 'com.theneura:android-sdk:+'
+    compile 'com.theneura:android-sdk:4.5.1'
     compile 'com.google.firebase:firebase-messaging:10.2.0'
     
     //compile "com.google.android.gms:play-services-awareness:10.2.0"
