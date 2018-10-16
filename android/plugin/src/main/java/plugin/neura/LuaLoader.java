@@ -106,7 +106,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.31";
+	public static final String PLUGIN_VERSION = "1.0.41";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
@@ -1834,11 +1834,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		final int finalListener = listener;
 		final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 
+		final String final_appid = appUid;
+		final String final_appSecret = appSecret;
+		final Context final_context = activity.getApplicationContext();
+		
+
 		final boolean finalShowAreYouSureDialog = showAreYouSureDialog;
 		activity.runOnUiThread(new Runnable() {
 			@Override
 
 			public void run() {
+
+				mNeuraApiClient = NeuraApiClient.getClient(final_context, final_appid, final_appSecret);
 				mNeuraApiClient.forgetMe(activity, finalShowAreYouSureDialog, new Handler.Callback() {
 					@Override
 					public boolean handleMessage(Message msg) {

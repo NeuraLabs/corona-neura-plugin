@@ -53,6 +53,7 @@
     <dimen name="neura_sdk_login_input_layer_margin_top">-12dp</dimen>
     <dimen name="neura_sdk_login_screen_padding">30dp</dimen>
     <dimen name="neura_sdk_login_screen_padding_small">15dp</dimen>
+    <dimen name="neura_sdk_login_screen_padding_top">0dp</dimen>
     <dimen name="neura_sdk_login_text_margin">15dp</dimen>
     <dimen name="neura_sdk_login_text_size">14sp</dimen>
     <dimen name="neura_sdk_neura_me_header_title_text_size">28sp</dimen>
@@ -66,6 +67,9 @@
     <dimen name="neura_sdk_secondary_title_text_size">16sp</dimen>
     <dimen name="neura_sdk_title_text_size">31sp</dimen>
     <dimen name="neura_sdk_web_view_progress_bar_text_size">24sp</dimen>
+    <string name="app_name">Ratatouille</string>
+    <string name="foreground_notification_action_label">Tap to open the app</string>
+    <string formatted="true" name="foreground_notification_label">%s is ON</string>
     <string name="generic_invite_intent_chooser_dialog_title">"Invite to Neura via"</string>
     <string name="latitude_longitude">%1$.8f, %2$.8f</string>
     <string name="neura_dashboard_app_name">Dashboard</string>
@@ -244,7 +248,7 @@
     <string name="neura_sdk_phone_code_confirmation_resend">Resend code</string>
     <string name="neura_sdk_phone_code_missing">Code is not valid.</string>
     <string name="neura_sdk_phone_code_sending">Sending...</string>
-    <string name="neura_sdk_phone_message">You will use it to manage features you have just enabled.</string>
+    <string name="neura_sdk_phone_message">This will allow %1$s to personalize your experience</string>
     <string name="neura_sdk_phone_not_valid">Phone number is not valid</string>
     <string name="neura_sdk_phone_sent1">An sms with an activation code has been sent to your phone number</string>
     <string name="neura_sdk_phone_sent2">Please enter the code below:</string>
@@ -299,9 +303,15 @@
     <string name="neura_sdk_yes">Yes</string>
     <string name="password_change_failure_message">An error occurred while trying to change password. Please refresh and try again</string>
     <string name="password_change_success_message">New password saved </string>
+    <string name="permissions_notification_channel_name">Permissions Channel</string>
+    <string formatted="false" name="permissions_notification_content">%s request a permission to location, so it can better perform. Please enable it by tapping on this notification</string>
+    <string name="permissions_notification_title">Missing Permission</string>
     <string name="running_mode_notification_desc_start">Tap play to start running</string>
     <string name="running_mode_notification_desc_stop">Tap pause to stop running</string>
     <string name="running_mode_notification_title">Running detector</string>
+    <string formatted="false" name="sensors_notification_channel_name">Sensors Channel</string>
+    <string formatted="false" name="sensors_notification_content">%s request that the %s sensor will be enabled, so it can better perform. Please enable it by tapping on this notification</string>
+    <string name="sensors_notification_title">Sensor is disabled</string>
     <style name="NeuraAlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
         <item name="android:background">#fafafa</item>
         <item name="android:colorPrimary">@color/neura_sdk_blue_btn</item>
@@ -349,10 +359,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/neura_sdk_light_gray_fill_selected</item>
-        <item name="android:paddingTop">@dimen/neura_sdk_login_screen_padding</item>
+        <item name="android:paddingTop">@dimen/neura_sdk_login_screen_padding_top</item>
         <item name="android:paddingBottom">@dimen/neura_sdk_login_screen_padding_small</item>
-        <item name="android:paddingLeft">@dimen/neura_sdk_login_screen_padding</item>
-        <item name="android:paddingRight">@dimen/neura_sdk_login_screen_padding</item>
+        <item name="android:paddingLeft">@dimen/neura_sdk_login_screen_padding_small</item>
+        <item name="android:paddingRight">@dimen/neura_sdk_login_screen_padding_small</item>
     </style>
     <style name="neura_sdk_auth_link">
         <item name="android:layout_width">wrap_content</item>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <exclude domain="sharedpref" path="neura_preferences.xml"/>
+    <exclude domain="sharedpref" path="cache.xml"/>
+    <exclude domain="sharedpref" path="GCM_PREFS.xml"/>
+    <exclude domain="sharedpref" path="LOCATION_PREFS_NAME.xml"/>
+    <exclude domain="sharedpref" path="LOCATION_HELPER_PREFS.xml"/>
+    <exclude domain="sharedpref" path="sensors.xml"/>
+    <exclude domain="sharedpref" path="com_neura_fence_prefs.xml"/>
+    <exclude domain="sharedpref" path="com.neura.steps_prefs"/>
+    <exclude domain="sharedpref" path="com.neura.vap_prefs"/>
+    <exclude domain="database" path="neura.db"/>
+</full-backup-content>

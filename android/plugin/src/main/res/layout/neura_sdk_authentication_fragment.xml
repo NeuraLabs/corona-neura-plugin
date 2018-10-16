@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/neura_sdk_auth_layout">
 
     <include layout="@layout/neura_sdk_application_icon_layout" />
@@ -33,8 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/authentication_title"
             android:focusableInTouchMode="true"
-            android:hint="@string/neura_sdk_phone"
-            app:errorEnabled="true">
+            android:hint="@string/neura_sdk_phone">
 
             <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
                 android:id="@+id/authentication_fragment_email_edit_text"
@@ -50,8 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/authentication_fragment_email_edit_text_lyt"
             android:layout_marginTop="@dimen/neura_sdk_login_input_layer_margin_top"
-            android:visibility="gone"
-            app:errorEnabled="true">
+            android:visibility="gone">
 
             <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
                 android:id="@+id/authentication_fragment_weave_name_edit_text"

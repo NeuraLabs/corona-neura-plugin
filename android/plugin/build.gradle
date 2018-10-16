@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }
@@ -32,12 +32,28 @@ tasks.withType(JavaCompile) {
     compileTask -> compileTask.dependsOn('exportPluginJar')
 }
 
+repositories {
+   flatDir {
+       dirs 'libs', "/Users/alanthomson/Library/Application Support/Corona/Native/Corona/android/lib/Corona/libs"
+   }
+}
+
 dependencies {
-    compile fileTree(dir: "$coronaEnterpriseDir/Corona/android/lib/Corona/libs", include: '*.jar')
+    compile fileTree(dir: "/Users/alanthomson/Library/Application Support/Corona/Native/Corona/android/lib/Corona/libs", include: '*.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
 
-    compile 'com.theneura:android-sdk:4.5.1'
+    //compile 'com.theneura:android-sdk:4.5.1'
     compile 'com.google.firebase:firebase-messaging:10.2.0'
+
+    compile 'com.android.volley:volley:1.1.0'
+    compile 'android.arch.work:work-runtime:1.0.0-alpha09'
+    //compile 'android.arch.work:work-runtime:1.0.0-alpha06'
+    compile 'com.google.android.gms:play-services-location:10.2.1'
+    compile 'com.google.android.gms:play-services-awareness:10.2.1'
+    compile 'com.google.android.gms:play-services-gcm:10.2.1'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+
+
     
     //compile "com.google.android.gms:play-services-awareness:10.2.0"
     //compile 'com.google.android.gms:play-services-gcm:9.6.1'

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/neura_sdk_auth_layout"
     android:paddingBottom="@dimen/neura_sdk_padding_login"
     android:paddingTop="@dimen/neura_sdk_padding_login">
@@ -103,8 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/neura_sdk_phone"
-                android:theme="@style/neura_sdk_text_input_style"
-                app:errorEnabled="true">
+                android:theme="@style/neura_sdk_text_input_style">
 
                 <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
                     android:id="@+id/authentication_fragment_email_edit_text"
@@ -135,8 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/neura_sdk_activation_code"
-                android:theme="@style/neura_sdk_text_input_style"
-                app:errorEnabled="true">
+                android:theme="@style/neura_sdk_text_input_style">
 
                 <com.neura.dashboard.view.widget.RobotoRegularBaseEditText
                     android:id="@+id/phone_verification_code"
