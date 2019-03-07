@@ -106,7 +106,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/** This corresponds to the event name, e.g. [Lua] event.name */
 	private static final String PLUGIN_NAME = "neura";
-	public static final String PLUGIN_VERSION = "1.0.41";
+	public static final String PLUGIN_VERSION = "1.0.51";
 
     public static final String ACTION_1 = "pressOK";
     public static final String ACTION_2 = "pressSnooze";
@@ -1490,13 +1490,19 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 	public int authenticate(final LuaState L) {
+
+		Log.d("Corona", "Neura auth called");
+
 		int listener = fListener;
 		if ( CoronaLua.isListener( L, -1, "" ) ) {
 			listener = CoronaLua.newRef(L, -1);
 		}
 
+
 		if (appUid != null)
 		{
+			Log.d("Corona", "can progress");
+
 			final int finalListener = listener;
 			final CoronaActivity activity = CoronaEnvironment.getCoronaActivity();
 
@@ -1519,13 +1525,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					boolean result = mNeuraApiClient.authenticate(request, new AnonymousAuthenticateCallBack() {
 						@Override
 						public  void onSuccess(final AnonymousAuthenticateData authenticateData) {
+							Log.d("Corona", "anonymous onSuccess");
 							mNeuraApiClient.registerAuthStateListener(new AnonymousAuthenticationStateListener() {
 								@Override
 								public void onStateChanged(AuthenticationState state) {
 									switch (state) {
 										case AccessTokenRequested:
+											Log.d("Corona", "anonymous onStateChanged a");
 											break;
 										case AuthenticatedAnonymously:
+
+											Log.d("Corona", "anonymous onStateChanged b");
 											// successful authentication
 											mNeuraApiClient.unregisterAuthStateListener();
 
@@ -1542,7 +1552,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 											dispatch(params, "userAuthenticated", finalListener);
 											break;
 										case NotAuthenticated:
+											Log.d("Corona", "anonymous onStateChanged c");
+											break;
 										case FailedReceivingAccessToken:
+											Log.d("Corona", "anonymous onStateChanged d");
 											// Authentication failed indefinitely. a good opportunity to retry the authentication flow
 											mNeuraApiClient.unregisterAuthStateListener();
 											break;
@@ -1558,6 +1571,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 						@Override
 						public void onFailure(int errorCode) {
+							Log.d("Corona", "anonymous onFailure");
+
 							HashMap<String, Object> params = new HashMap<>();
 							params.put("type", "Failure");
 							params.put("isError", true);
@@ -1570,6 +1585,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 					});
 				}
 			});
+		}
+		else
+		{
+			Log.d("Corona", "cannot progress");
 		}
 
 

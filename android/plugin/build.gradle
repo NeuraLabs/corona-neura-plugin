@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
@@ -8,43 +7,47 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+
+    ndk {
+        abiFilters "armeabi-v7a", "x86"
+    }
+
+    packagingOptions {
+        exclude "lib/arm64-v8a/libsqliteX.so"
+        exclude "lib/arm64-v8a/libratatouille.so"
+        exclude "lib/x86_64/libsqliteX.so"
+        exclude "lib/x86_64/libratatouille.so"
+    }
+
     }
     lintOptions {
         abortOnError false
     }
 }
-
 def coronaEnterpriseDir = "$rootDir/Native"
-
 task exportPluginJar (type: Copy, description: 'place the plugin JAR file in the outputs directory and give it a name from the AndroidManifest.xml') {
     def pluginName = new XmlSlurper().parse(file('src/main/AndroidManifest.xml')).@package.text()
     from "$buildDir/intermediates/bundles/release/"
     into "$buildDir/outputs/jar"
     include 'classes.jar'
     rename 'classes.jar', "${pluginName}.jar"
-
     doFirst {
         println '== exportPluginJar =='
     }
 }
-
 tasks.withType(JavaCompile) {
     compileTask -> compileTask.dependsOn('exportPluginJar')
 }
-
 repositories {
    flatDir {
        dirs 'libs', "/Users/alanthomson/Library/Application Support/Corona/Native/Corona/android/lib/Corona/libs"
    }
 }
-
 dependencies {
     compile fileTree(dir: "/Users/alanthomson/Library/Application Support/Corona/Native/Corona/android/lib/Corona/libs", include: '*.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
-
     //compile 'com.theneura:android-sdk:4.5.1'
     compile 'com.google.firebase:firebase-messaging:10.2.0'
-
     compile 'com.android.volley:volley:1.1.0'
     compile 'android.arch.work:work-runtime:1.0.0-alpha09'
     //compile 'android.arch.work:work-runtime:1.0.0-alpha06'
@@ -52,8 +55,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-awareness:10.2.1'
     compile 'com.google.android.gms:play-services-gcm:10.2.1'
     compile 'com.android.support:appcompat-v7:26.1.0'
-
-
     
     //compile "com.google.android.gms:play-services-awareness:10.2.0"
     //compile 'com.google.android.gms:play-services-gcm:9.6.1'
@@ -63,4 +64,3 @@ dependencies {
     //compile 'com.android.support:appcompat-v7:25.1.0'
     //compile 'com.theneura:android-sdk:4.5.1'
 }
-
